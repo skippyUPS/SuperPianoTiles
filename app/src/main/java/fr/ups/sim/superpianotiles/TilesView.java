@@ -101,12 +101,13 @@ public class TilesView extends View {
         pText.setTextSize(textSize);
         pText.setColor(textColor);
         pTile.setColor(tileColor);
-        if(compteur == 10){
-            int left = getWidth() * 2 / 5;
-            int top = getBottom() * 3 / 4;
-            int right = getWidth() - getWidth() / 5;
-            int bottom = getBottom();
+        if(compteur == 50){
             Random rand = new Random();
+            int posAleatoir = rand.nextInt(4);
+            int left = getWidth() * posAleatoir / 5;
+            int top = getBottom();
+            int right = getWidth() - getWidth() * (4-posAleatoir) / 5;
+            int bottom = getBottom() - getBottom() * 3 / 4;
             int nombreAleatoire = rand.nextInt(4);
             int drawable = 0;
             switch (nombreAleatoire){
@@ -122,7 +123,6 @@ public class TilesView extends View {
             Rect rect = new Rect(left, top, right, bottom);
             rectangles.add(rect);
             addTile(rect, canvas, drawable);
-            Log.i("Teub", "Couille");
             compteur = 0;
         }
         if(!present) {
