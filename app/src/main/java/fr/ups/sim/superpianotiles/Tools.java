@@ -1,4 +1,4 @@
-package fr.ups.sim.superpianotiles.util;
+package fr.ups.sim.superpianotiles;
 
 import java.net.URI;
 import java.util.Random;
@@ -9,15 +9,15 @@ import fr.ups.sim.superpianotiles.R;
  * Created by LeClem on 21/03/2016.
  */
 public class Tools {
-    private final int CARTMAN = 0;
-    private final int KENNY = 1;
-    private final int KYLE = 2;
-    private final int STAN = 3;
+    private static final int CARTMAN = 0;
+    private static final int KENNY = 1;
+    private static final int KYLE = 2;
+    private static final int STAN = 3;
 
 
     /* Renvoie un identifiant d'image,
      * -1 en cas d'echec */
-    public int randomImage()
+    public static int randomImage()
     {
         Random r = new Random();
 
@@ -34,7 +34,7 @@ public class Tools {
 
     /* Pour un identifiant d'image, renvoie un identifiant de fichier audio
      * -1 en cas d'echec */
-    public int randomSound(int imageId)
+    public static int randomSound(int imageId)
     {
         switch (imageId)
         {
