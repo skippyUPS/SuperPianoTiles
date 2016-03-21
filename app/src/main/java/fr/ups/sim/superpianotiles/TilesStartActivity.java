@@ -20,6 +20,8 @@ public class TilesStartActivity extends Activity {
     private final String PROGRESS_BAR_INCREMENT="ProgreesBarIncrementId";
     TilesView tilesView;
 
+
+    //j'aime le caca
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
