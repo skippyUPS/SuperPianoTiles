@@ -1,5 +1,4 @@
 package fr.ups.sim.superpianotiles;
-
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -22,6 +21,7 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Random;
 
 /**
  * Custom view that displays tiles
@@ -37,7 +37,7 @@ public class TilesView extends View {
     private boolean run = true;
     Paint pText = new Paint();
     Paint pTile = new Paint();
-    private int compteur = 0;
+    private int compteur;
 
     public TilesView(Context context) {
         super(context);
@@ -56,6 +56,7 @@ public class TilesView extends View {
 
     private void init(AttributeSet attrs, int defStyle) {
         // Load attributes
+        compteur = 0;
         final TypedArray a = getContext().obtainStyledAttributes(
                 attrs, R.styleable.TilesView, defStyle, 0);
 
@@ -100,13 +101,36 @@ public class TilesView extends View {
         pText.setTextSize(textSize);
         pText.setColor(textColor);
         pTile.setColor(tileColor);
-
+        if(compteur == 10){
+            int left = getWidth() * 2 / 5;
+            int top = getBottom() * 3 / 4;
+            int right = getWidth() - getWidth() / 5;
+            int bottom = getBottom();
+            Random rand = new Random();
+            int nombreAleatoire = rand.nextInt(4);
+            int drawable = 0;
+            switch (nombreAleatoire){
+                case(0): drawable = R.drawable.kyle;
+                        break;
+                case(1): drawable = R.drawable.stan;
+                        break;
+                case(2): drawable = R.drawable.kenny;
+                    break;
+                case(3): drawable = R.drawable.cartman;
+                    break;
+            }
+            Rect rect = new Rect(left, top, right, bottom);
+            rectangles.add(rect);
+            addTile(rect, canvas, drawable);
+            Log.i("Teub", "Couille");
+            compteur = 0;
+        }
         if(!present) {
             //Tile 1
             int left = 0;
-            int top = getBottom() * 3 / 4 + compteur;
+            int top = getBottom() * 3 / 4;
             int right = getWidth() / 5;
-            int bottom = getBottom() + compteur;
+            int bottom = getBottom();
             Rect rect = new Rect(left, top, right, bottom);
             addTile(rect, canvas, R.drawable.kyle);
             rectangles.add(rect);
@@ -140,8 +164,6 @@ public class TilesView extends View {
             mExampleDrawable.draw(canvas);
         }
         compteur ++;
-        //if(run)
-           // invalidate();
     }
 
     public boolean isRun() {

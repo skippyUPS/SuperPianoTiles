@@ -20,8 +20,6 @@ public class TilesStartActivity extends Activity {
     private final String PROGRESS_BAR_INCREMENT="ProgreesBarIncrementId";
     TilesView tilesView;
 
-
-    //j'aime le caca
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,23 +33,6 @@ public class TilesStartActivity extends Activity {
                 return onTouchEventHandler(event);
             }
         });
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Log.i("Teub","Couille");
-            }
-        });
-        thread.start();
     }
 
     @Override
@@ -75,10 +56,6 @@ public class TilesStartActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public void update(){
-
     }
 
     /*
