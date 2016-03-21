@@ -66,7 +66,6 @@ public class TilesView extends View {
                     R.styleable.TilesView_exampleDrawable);
             mExampleDrawable.setCallback(this);
         }
-
         a.recycle();
     }
 

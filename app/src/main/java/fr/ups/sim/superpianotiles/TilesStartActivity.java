@@ -3,6 +3,8 @@ package fr.ups.sim.superpianotiles;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Message;
 import android.util.Log;
@@ -19,6 +21,7 @@ public class TilesStartActivity extends Activity {
 
     private final String PROGRESS_BAR_INCREMENT="ProgreesBarIncrementId";
     TilesView tilesView;
+    MediaPlayer mPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,8 +65,20 @@ public class TilesStartActivity extends Activity {
      * ICI - Commentez le code
      */
     private boolean onTouchEventHandler (MotionEvent evt){
+        mPlayer = MediaPlayer.create(this, R.raw.kyle);
+        if(mPlayer.isPlaying())
+        {
+            mPlayer.stop();
+        }
+
+
         if(evt.getAction()==MotionEvent.ACTION_DOWN) {
             Log.i("TilesView", "Touch event handled");
+            if(this.tilesView.getRectFromTilesView((int)evt.getX(),(int) evt.getY()) != null)
+            {
+                mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                mPlayer.start();
+            }
             tilesView.setRun(true);
             Runnable updateRunnable = new Runnable(){
                 @Override
