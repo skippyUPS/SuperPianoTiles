@@ -22,7 +22,7 @@ public class TilesStartActivity extends Activity {
     private final String PROGRESS_BAR_INCREMENT="ProgreesBarIncrementId";
     TilesView tilesView;
     MediaPlayer mPlayer;
-
+    Menu menu;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
