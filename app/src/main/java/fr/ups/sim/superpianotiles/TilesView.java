@@ -176,7 +176,7 @@ public class TilesView extends View {
     }
 
     public void addTile(Rect rect, Canvas canvas, int drawable) {
-        Drawable d = getResources().getDrawable(R.drawable.cartman);
+        Drawable d = getResources().getDrawable(drawable);
         d.setBounds(rect);
         d.draw(canvas);
         //canvas.drawRect(rect, pTile);
