@@ -20,9 +20,9 @@ public class Tools {
     public static int randomImage()
     {
         Random r = new Random();
+        int val = r.nextInt(4);
 
-        switch(r.nextInt(0 - 3 + 1) + 0)
-        {
+        switch(val){
             case CARTMAN: return R.drawable.cartman;
             case KENNY: return R.drawable.kenny;
             case KYLE: return R.drawable.kyle;

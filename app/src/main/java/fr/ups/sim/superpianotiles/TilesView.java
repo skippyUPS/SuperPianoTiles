@@ -28,7 +28,7 @@ import java.util.Random;
  */
 public class TilesView extends View {
 
-    private List<Rect> rectangles = new ArrayList<Rect>();
+    private List<Tuile> rectangles = new ArrayList<Tuile>();
     private int tileColor = Color.BLUE;
     private int textColor = Color.WHITE;
     private Drawable mExampleDrawable;
@@ -69,14 +69,26 @@ public class TilesView extends View {
         a.recycle();
     }
 
-    public Rect getRectFromTilesView(int x, int y)
-    {
-        for(Iterator<Rect> it = this.rectangles.listIterator(); it.hasNext(); )
+    public Tuile getTuileFromPos(int x, int y) {
+        for(Iterator<Tuile> it = this.rectangles.listIterator(); it.hasNext(); )
         {
-            Rect currentRect = it.next();
-            if(currentRect.contains(x, y))
+            Tuile currentRect = it.next();
+            if(currentRect.getRectangle().contains(x, y))
             {
                 return currentRect;
+            }
+        }
+        return null;
+    }
+
+    public Rect getRectFromTilesView(int x, int y)
+    {
+        for(Iterator<Tuile> it = this.rectangles.listIterator(); it.hasNext(); )
+        {
+            Tuile currentRect = it.next();
+            if(currentRect.getRectangle().contains(x, y))
+            {
+                return currentRect.getRectangle();
             }
         }
         return null;
@@ -93,35 +105,23 @@ public class TilesView extends View {
         int paddingTop = getPaddingTop();
         int paddingRight = getPaddingRight();
         int paddingBottom = getPaddingBottom();
-
         int contentWidth = getWidth() - paddingLeft - paddingRight;
         int contentHeight = getHeight() - paddingTop - paddingBottom;
 
         pText.setTextSize(textSize);
         pText.setColor(textColor);
         pTile.setColor(tileColor);
-        if(compteur == (getBottom() - (getBottom() + getBottom()  / 4))){
+        if(compteur == (getBottom() - getBottom() * 3 / 4)/10){
             Random rand = new Random();
             int posAleatoir = rand.nextInt(4);
             int left = getWidth() * posAleatoir / 5;
             int top = getBottom();
             int right = getWidth() - getWidth() * (4-posAleatoir) / 5;
             int bottom = getBottom() + getBottom()  / 4;
-            int nombreAleatoire = rand.nextInt(4);
-            int drawable = 0;
-            switch (nombreAleatoire){
-                case(0): drawable = R.drawable.kyle;
-                        break;
-                case(1): drawable = R.drawable.stan;
-                        break;
-                case(2): drawable = R.drawable.kenny;
-                    break;
-                case(3): drawable = R.drawable.cartman;
-                    break;
-            }
             Rect rect = new Rect(left, top, right, bottom);
-            rectangles.add(rect);
-            addTile(rect, canvas, drawable);
+            Tuile tuile = new Tuile(rect);
+            rectangles.add(tuile);
+            addTile(rect, canvas, tuile.getDrawable());
             compteur = 0;
         }
         if(!present) {
@@ -131,8 +131,9 @@ public class TilesView extends View {
             int right = getWidth() / 5;
             int bottom = getBottom();
             Rect rect = new Rect(left, top, right, bottom);
-            addTile(rect, canvas, R.drawable.kyle);
-            rectangles.add(rect);
+            Tuile tuile = new Tuile(rect);
+            addTile(rect, canvas, tuile.getDrawable());
+            rectangles.add(tuile);
 
             //Tile 2
             left = getWidth() * 3 / 5;
@@ -140,29 +141,33 @@ public class TilesView extends View {
             right = getWidth() - getWidth() / 5;
             bottom = getBottom() / 2;
             rect = new Rect(left, top, right, bottom);
-            addTile(rect, canvas, R.drawable.kyle);
-            rectangles.add(rect);
+            tuile = new Tuile(rect);
+            addTile(rect, canvas, tuile.getDrawable());
+            rectangles.add(tuile);
             present = true;
         }
         else{
             if(!rectangles.isEmpty()) {
-                ArrayList<Rect> newRectangles = new ArrayList<Rect>();
-                for(Rect r : rectangles) {
+                Log.i("TEUB","Size: "+ rectangles.size());
+                ArrayList<Tuile> newRectangles = new ArrayList<Tuile>();
+                for(Tuile tuile : rectangles) {
+                    Rect r = tuile.getRectangle();
                     r.set(r.left, r.top - 10, r.right, r.bottom - 10);
-                    newRectangles.add(r);
-                    addTile(r, canvas, R.drawable.kyle);
+                    if(r.bottom > getTop()+60)
+                        newRectangles.add(tuile);
+                    tuile.setRectangle(r);
+                    addTile(r, canvas, tuile.getDrawable());
                 }
+                rectangles.clear();
                 rectangles = newRectangles;
             }
         }
-
         // Draw the example drawable on top of the text.
         if (mExampleDrawable != null) {
             mExampleDrawable.setBounds(paddingLeft, paddingTop,
                     paddingLeft + contentWidth, paddingTop + contentHeight);
             mExampleDrawable.draw(canvas);
         }
-        Log.i("TEUB","c"+((getBottom() + getBottom()  / 4) + getBottom()));
         compteur ++;
     }
 
@@ -171,7 +176,7 @@ public class TilesView extends View {
     }
 
     public void addTile(Rect rect, Canvas canvas, int drawable) {
-        Drawable d = getResources().getDrawable(drawable);
+        Drawable d = getResources().getDrawable(R.drawable.cartman);
         d.setBounds(rect);
         d.draw(canvas);
         //canvas.drawRect(rect, pTile);

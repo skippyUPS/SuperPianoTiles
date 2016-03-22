@@ -65,17 +65,13 @@ public class TilesStartActivity extends Activity {
      * ICI - Commentez le code
      */
     private boolean onTouchEventHandler (MotionEvent evt){
-        mPlayer = MediaPlayer.create(this, R.raw.kyle);
-        if(mPlayer.isPlaying())
-        {
-            mPlayer.stop();
-        }
-
-
         if(evt.getAction()==MotionEvent.ACTION_DOWN) {
             Log.i("TilesView", "Touch event handled");
-            if(this.tilesView.getRectFromTilesView((int)evt.getX(),(int) evt.getY()) != null)
+            Tuile tuile = this.tilesView.getTuileFromPos((int)evt.getX(),(int) evt.getY());
+            if(tuile != null)
             {
+                int raw = tuile.getRaw();
+                mPlayer = MediaPlayer.create(this, raw);
                 mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                 mPlayer.start();
             }
