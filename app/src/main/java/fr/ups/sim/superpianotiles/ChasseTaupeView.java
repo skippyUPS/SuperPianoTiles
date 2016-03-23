@@ -8,6 +8,8 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
+import android.provider.MediaStore;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -26,6 +28,7 @@ public class ChasseTaupeView  extends View{
     private Tuile tiles ;
     private boolean run = true;
     private Map<String, Drawable> images = new HashMap<String, Drawable>();
+
 
     public ChasseTaupeView(Context context) {
         super(context);
@@ -53,6 +56,8 @@ public class ChasseTaupeView  extends View{
         images.put("cartman",getResources().getDrawable(R.drawable.cartman));
         images.put("kenny", getResources().getDrawable(R.drawable.kenny));
 
+
+
         if (a.hasValue(R.styleable.TilesView_exampleDrawable)) {
             mExampleDrawable = a.getDrawable(
                     R.styleable.TilesView_exampleDrawable);
@@ -66,12 +71,12 @@ public class ChasseTaupeView  extends View{
     {
         if (tiles == null)
         {
-           return null;
+            return null;
         }
         if( this.tiles.getRectangle().contains(x,y))
-                return tiles;
+            return tiles;
         else
-                return null;
+            return null;
     }
 
     public void setTiles(Tuile tiles) {
