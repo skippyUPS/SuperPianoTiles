@@ -19,6 +19,7 @@ public class Menu extends Activity{
 
 
         final Button loginButton = (Button) findViewById(R.id.button);
+        final Button chasseTaupeButton = (Button) findViewById(R.id.button3);
         loginButton.setOnClickListener(new View.OnClickListener() {
 
             @Override

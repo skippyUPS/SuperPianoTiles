@@ -7,15 +7,26 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal">
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/logo2">
+
+        <Button
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="Mode Defilement"
+            android:id="@+id/button"
+            android:visibility="visible"
+            android:layout_marginTop="105dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Lancer"
-            android:id="@+id/button"
-            android:layout_marginBottom="88dp"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true" />
+            android:text="Chasse Taupe    "
+            android:id="@+id/button3"
+            android:layout_centerVertical="true"
+            android:layout_alignEnd="@+id/button" />
+
     </RelativeLayout>
 </LinearLayout>
