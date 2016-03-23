@@ -1,6 +1,7 @@
 package fr.ups.sim.superpianotiles;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
@@ -23,6 +24,7 @@ public class TilesStartActivity extends Activity {
     private final String PROGRESS_BAR_INCREMENT="ProgreesBarIncrementId";
     TilesView tilesView;
     MediaPlayer mPlayer;
+    //Dialog dialog = new Dialog(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,22 +80,28 @@ public class TilesStartActivity extends Activity {
                     mPlayer = MediaPlayer.create(this, raw);
                     mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                     mPlayer.start();
+                    tilesView.delTuile();
                 }
             }
             tilesView.setRun(true);
+
             Runnable updateRunnable = new Runnable(){
                 @Override
                 public void run(){
                     if(tilesView.isRun()) {
-                        tilesView.postInvalidate();
-                        tilesView.postDelayed(this, 1);//1000 ms / 30fps
+                        if (tilesView.isRun()){
+                            tilesView.postInvalidate();
+                            tilesView.postDelayed(this, 1);//1000 ms / 30fps
+                        }
+                       /* else{
+                            dialog.setContentView(R.layout.popup_mort);
+                            dialog.show();
+                            Log.i("TEUB","PERDU!");
+                        }*/
                     }
                 }
             };
             runOnUiThread(updateRunnable);
-        }
-        if(evt.getAction()==MotionEvent.ACTION_UP){
-            tilesView.setRun(false);
         }
         return true;
     }

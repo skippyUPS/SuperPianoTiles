@@ -40,6 +40,7 @@ public class TilesView extends View {
     private boolean run = true;
     private int compteur;
     private Map<String, Drawable> images = new HashMap<String, Drawable>();
+    boolean init = false;
 
     public TilesView(Context context) {
         super(context);
@@ -54,6 +55,23 @@ public class TilesView extends View {
     public TilesView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(attrs, defStyle);
+    }
+
+    private void initTuile(Canvas canvas){
+        for(int i=0; i<4; i++){
+            Random rand = new Random();
+            int posAleatoir = rand.nextInt(5);     //Variable aleatoire qui positionne la nouvelle tuile
+
+            int left = getWidth() * posAleatoir / 5;
+            int top = getBottom()- getBottom() * (3-i) / 4;
+            int right = getWidth() - getWidth() * (4-posAleatoir) / 5;
+            int bottom = getBottom() * i /4;
+            Rect rect = new Rect(left, top, right, bottom);
+            Tuile tuile = new Tuile(rect);
+            //ajout de la nouvelle tuile dans la collection des tuiles
+            rectangles.offer(tuile);
+            addTile(rect, canvas, tuile.getNom());
+        }
     }
 
     private void init(AttributeSet attrs, int defStyle) {
@@ -92,7 +110,7 @@ public class TilesView extends View {
     /*Ajout d'une nouvelle tuile dans la file des rectangles*/
     public void nouvelleTuile(){
         Random rand = new Random();
-        int posAleatoir = rand.nextInt(4);     //Variable aleatoire qui positionne la nouvelle tuile
+        int posAleatoir = rand.nextInt(5);     //Variable aleatoire qui positionne la nouvelle tuile
 
         int left = getWidth() * posAleatoir / 5;
         int top = getTop() - getBottom() /4;
@@ -105,9 +123,17 @@ public class TilesView extends View {
         compteur = 0;
     }
 
+    public void delTuile(){
+        rectangles.remove();
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        if(!init){
+            initTuile(canvas);
+            init = true;
+        }
         int paddingLeft = getPaddingLeft();
         int paddingTop = getPaddingTop();
         int paddingRight = getPaddingRight();
@@ -124,10 +150,12 @@ public class TilesView extends View {
                 Tuile tuile = rectangles.remove();
                 Rect r = tuile.getRectangle();
                 r.set(r.left, r.top + 10, r.right, r.bottom + 10);
-                if(r.top < getBottom() - 60){
+                if(r.top < getBottom() - 100){
                     rectangles.offer(tuile);
+                    addTile(r, canvas, tuile.getNom());
                 }
-                addTile(r, canvas, tuile.getNom());
+                else
+                    setRun(false);
             }
         }
         // Draw the example drawable on top of the text.
