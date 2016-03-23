@@ -31,4 +31,9 @@ public class Tuile {
     public int getRaw() {
         return raw;
     }
+
+    public void setInvisible()
+    {
+        rectangle.setEmpty();
+    }
 }

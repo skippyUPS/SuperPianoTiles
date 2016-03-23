@@ -1,6 +1,7 @@
 package fr.ups.sim.superpianotiles;
 
 import android.app.Activity;
+import android.graphics.Canvas;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -59,9 +60,10 @@ public class ChasseTaupe extends Activity{
          * ICI - Commentez le code
          */
         private boolean onTouchEventHandler (MotionEvent evt){
+            Tuile tuile = this.tilesView.getTuileFromPos((int)evt.getX(),(int) evt.getY());
             if(evt.getAction()==MotionEvent.ACTION_DOWN) {
                 Log.i("TilesView", "Touch event handled");
-                Tuile tuile = this.tilesView.getTuileFromPos((int)evt.getX(),(int) evt.getY());
+
                 if(tuile != null)
                 {
                     int raw = tuile.getRaw();
@@ -74,6 +76,14 @@ public class ChasseTaupe extends Activity{
             }
             if(evt.getAction()==MotionEvent.ACTION_UP){
                 tilesView.setRun(false);
+                if(tuile != null)
+                {
+                    tilesView.getRectangles().remove(tuile);
+
+                    /*Canvas can = new Canvas();
+                    tuile.getRectangle().set(0, 0, 0, 0);
+                    tilesView.addTile(tuile.getRectangle(), can, tuile.getDrawable());*/
+                }
             }
 
             return true;

@@ -19,6 +19,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Random;
@@ -28,7 +29,9 @@ import java.util.Random;
  */
 public class TilesView extends View {
 
-    private List<Tuile> rectangles = new ArrayList<Tuile>();
+
+
+    private List<Tuile> rectangles = new LinkedList<Tuile>();
     private int tileColor = Color.BLUE;
     private int textColor = Color.WHITE;
     private Drawable mExampleDrawable;
@@ -67,6 +70,10 @@ public class TilesView extends View {
             mExampleDrawable.setCallback(this);
         }
         a.recycle();
+    }
+
+    public List<Tuile> getRectangles() {
+        return rectangles;
     }
 
     public Tuile getTuileFromPos(int x, int y) {

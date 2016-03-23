@@ -9,13 +9,16 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".TilesStartActivity"
-            android:label="@string/title_activity_tiles_start" />
+            android:label="@string/title_activity_tiles_start"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ChasseTaupe"
-            android:label="@string/title_activity_tiles_start" />
+            android:label="@string/title_activity_tiles_start"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Menu"
-            android:label="@string/title_menu_start" >
+            android:label="@string/title_menu_start"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
