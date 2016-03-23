@@ -58,15 +58,14 @@ public class TilesView extends View {
     }
 
     private void initTuile(Canvas canvas){
-        for(int i=1; i<=4; i++){
+        for(int i=0; i<4; i++){
             Random rand = new Random();
             int posAleatoir = rand.nextInt(5);     //Variable aleatoire qui positionne la nouvelle tuile
 
             int left = getWidth() * posAleatoir / 5;
-            int top = getBottom()- getBottom() * i / 4;
-            Log.i("TEUB", "top:"+top);
+            int top = getBottom() * (3-i) / 4;
             int right = getWidth() - getWidth() * (4-posAleatoir) / 5;
-            int bottom = getBottom() * i /4;
+            int bottom = getBottom() * (4-i) /4;
             Rect rect = new Rect(left, top, right, bottom);
             Tuile tuile = new Tuile(rect);
             //ajout de la nouvelle tuile dans la collection des tuiles
