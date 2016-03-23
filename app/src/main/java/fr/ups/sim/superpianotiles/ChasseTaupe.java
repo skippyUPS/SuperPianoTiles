@@ -74,6 +74,11 @@ public class ChasseTaupe extends Activity{
                         mPlayer = MediaPlayer.create(this, raw);
                         mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                         mPlayer.start();
+                        mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                            public void onCompletion(MediaPlayer mp) {
+                                mp.release();
+                            }
+                        });
                     }
                 }
                 tilesView.setRun(true);
