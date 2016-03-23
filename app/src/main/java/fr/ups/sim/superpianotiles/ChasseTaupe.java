@@ -61,6 +61,7 @@ public class ChasseTaupe extends Activity{
          * ICI - Commentez le code
          */
         private boolean onTouchEventHandler (MotionEvent evt){
+
             Tuile tuile = this.tilesView.getTuileFromPos((int)evt.getX(),(int) evt.getY());
 
             if(evt.getAction()==MotionEvent.ACTION_DOWN) {

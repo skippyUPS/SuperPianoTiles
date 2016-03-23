@@ -64,6 +64,10 @@ public class ChasseTaupeView  extends View{
 
     public Tuile getTuileFromPos(int x,int y)
     {
+        if (tiles == null)
+        {
+           return null;
+        }
         if( this.tiles.getRectangle().contains(x,y))
                 return tiles;
         else
