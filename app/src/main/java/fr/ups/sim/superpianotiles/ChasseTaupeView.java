@@ -88,7 +88,7 @@ public class ChasseTaupeView  extends View{
         int bottom = getBottom() + getBottom()  / 4;
         Rect rect = new Rect(left, top, right, bottom);
         tiles= new Tuile(rect);
-        addTile(tiles.getRectangle(),canvas,tiles.getDrawable());
+        //addTile(tiles.getRectangle(),canvas,tiles.getNom());
 
 
         // Draw the example drawable on top of the text.

@@ -58,12 +58,12 @@ public class TilesView extends View {
     }
 
     private void initTuile(Canvas canvas){
-        for(int i=0; i<4; i++){
+        for(int i=1; i<=4; i++){
             Random rand = new Random();
             int posAleatoir = rand.nextInt(5);     //Variable aleatoire qui positionne la nouvelle tuile
 
             int left = getWidth() * posAleatoir / 5;
-            int top = getBottom()- getBottom() * (3-i) / 4;
+            int top = getBottom()- getBottom() * (4-i) / 4;
             int right = getWidth() - getWidth() * (4-posAleatoir) / 5;
             int bottom = getBottom() * i /4;
             Rect rect = new Rect(left, top, right, bottom);
@@ -130,32 +130,35 @@ public class TilesView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if(!init){
-            initTuile(canvas);
-            init = true;
-        }
+
         int paddingLeft = getPaddingLeft();
         int paddingTop = getPaddingTop();
         int paddingRight = getPaddingRight();
         int paddingBottom = getPaddingBottom();
         int contentWidth = getWidth() - paddingLeft - paddingRight;
         int contentHeight = getHeight() - paddingTop - paddingBottom;
+        if(!init){
+            Log.i("TEUB","zboub");
+            initTuile(canvas);
+            init = true;
+        }
+        else {
 
-        /*Le compteur permet de savoir si il faut creer une nouvelle*/
-        if(compteur == (getBottom() - getBottom() * 3 / 4)/10)
-            nouvelleTuile();
-        if(!rectangles.isEmpty()) {
-            Log.i("TEUB", "Size: " + rectangles.size());
-            for (int i=0; i<rectangles.size(); i++){
-                Tuile tuile = rectangles.remove();
-                Rect r = tuile.getRectangle();
-                r.set(r.left, r.top + 10, r.right, r.bottom + 10);
-                if(r.top < getBottom() - 100){
-                    rectangles.offer(tuile);
-                    addTile(r, canvas, tuile.getNom());
+            /*Le compteur permet de savoir si il faut creer une nouvelle*/
+            if (compteur == (getBottom() - getBottom() * 3 / 4) / 10)
+                nouvelleTuile();
+            if (!rectangles.isEmpty()) {
+                Log.i("TEUB", "Size: " + rectangles.size());
+                for (int i = 0; i < rectangles.size(); i++) {
+                    Tuile tuile = rectangles.remove();
+                    Rect r = tuile.getRectangle();
+                    r.set(r.left, r.top + 10, r.right, r.bottom + 10);
+                    if (r.top < getBottom() - 100) {
+                        rectangles.offer(tuile);
+                        addTile(r, canvas, tuile.getNom());
+                    } else
+                        setRun(false);
                 }
-                else
-                    setRun(false);
             }
         }
         // Draw the example drawable on top of the text.
