@@ -1,6 +1,7 @@
 package fr.ups.sim.superpianotiles;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.media.AudioManager;
@@ -8,6 +9,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.*;
+import android.widget.Chronometer;
 
 /**
  * Created by Quentin on 22/03/2016.
@@ -23,6 +25,8 @@ public class ChasseTaupe extends Activity{
 
             //ICI - Commentez le code
             tilesView = (ChasseTaupeView) findViewById(R.id.view2);
+
+
 
             //ICI - Commentez le code
             tilesView.setOnTouchListener(new View.OnTouchListener() {
