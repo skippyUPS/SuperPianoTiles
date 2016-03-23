@@ -90,7 +90,7 @@ public class ChasseTaupeView  extends View{
 
 
         Random rand = new Random();
-        int posAleatoir = rand.nextInt(4);
+        int posAleatoir = rand.nextInt(160);
         /*int left = getWidth() * posAleatoir / 5;
         int top = getBottom();
         int right = getWidth() - getWidth() * (4-posAleatoir) / 5;
