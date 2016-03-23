@@ -83,6 +83,7 @@ public class ChasseTaupe extends Activity{
                 if(tuile != null)
                 {
                     tilesView.setTiles(null);
+                    tilesView.invalidate();
                 }
             }
 
