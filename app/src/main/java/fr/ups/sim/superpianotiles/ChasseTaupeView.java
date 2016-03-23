@@ -9,8 +9,11 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -22,6 +25,7 @@ public class ChasseTaupeView  extends View{
     private Drawable mExampleDrawable;
     private Tuile tiles ;
     private boolean run = true;
+    private Map<String, Drawable> images = new HashMap<String, Drawable>();
 
     public ChasseTaupeView(Context context) {
         super(context);
@@ -43,6 +47,11 @@ public class ChasseTaupeView  extends View{
         final TypedArray a = getContext().obtainStyledAttributes(
                 attrs, R.styleable.TilesView, defStyle, 0);
 
+        //Initialisation des images
+        images.put("kyle",getResources().getDrawable(R.drawable.kyle));
+        images.put("stan", getResources().getDrawable(R.drawable.stan));
+        images.put("cartman",getResources().getDrawable(R.drawable.cartman));
+        images.put("kenny", getResources().getDrawable(R.drawable.kenny));
 
         if (a.hasValue(R.styleable.TilesView_exampleDrawable)) {
             mExampleDrawable = a.getDrawable(
@@ -82,13 +91,18 @@ public class ChasseTaupeView  extends View{
 
         Random rand = new Random();
         int posAleatoir = rand.nextInt(4);
-        int left = getWidth() * posAleatoir / 5;
+        /*int left = getWidth() * posAleatoir / 5;
         int top = getBottom();
         int right = getWidth() - getWidth() * (4-posAleatoir) / 5;
-        int bottom = getBottom() + getBottom()  / 4;
+        int bottom = getBottom() + getBottom()  / 4;*/
+        int left = 0;
+        int top = getBottom()*3/4;
+        int right = getWidth() /5;
+        int bottom = getBottom() ;
+
         Rect rect = new Rect(left, top, right, bottom);
         tiles= new Tuile(rect);
-        addTile(tiles.getRectangle(),canvas,tiles.getDrawable());
+        addTile(tiles.getRectangle(),canvas,tiles.getNom());
 
 
         // Draw the example drawable on top of the text.
@@ -99,11 +113,14 @@ public class ChasseTaupeView  extends View{
         }
     }
 
-    public void addTile(Rect rect, Canvas canvas, int drawable) {
-        Drawable d = getResources().getDrawable(drawable);
-        d.setBounds(rect);
-        d.draw(canvas);
-        //canvas.drawRect(rect, pTile);
+    public void addTile(Rect rect, Canvas canvas, String drawable) {
+        Log.i("Couille", "Coiulle");
+        Drawable d = images.get(drawable);
+        if(d != null) {
+            d.setBounds(rect);
+            d.draw(canvas);
+        }
+
     }
     /**
      * Gets the example drawable attribute value.
