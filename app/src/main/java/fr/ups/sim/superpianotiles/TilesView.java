@@ -140,12 +140,12 @@ public class TilesView extends View {
         if(!init){
             Log.i("TEUB","zboub");
             initTuile(canvas);
+            nouvelleTuile();
             init = true;
         }
         else {
-
-            /*Le compteur permet de savoir si il faut creer une nouvelle*/
-            if (compteur == (getBottom() - getBottom() * 3 / 4) / 10)
+        /*Le compteur permet de savoir si il faut creer une nouvelle*/
+            if (compteur == ((getBottom() - getBottom() * 3 / 4) / 10)+1)
                 nouvelleTuile();
             if (!rectangles.isEmpty()) {
                 Log.i("TEUB", "Size: " + rectangles.size());
