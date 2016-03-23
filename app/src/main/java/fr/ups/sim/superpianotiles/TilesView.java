@@ -18,10 +18,14 @@ import android.view.View;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Random;
 
 /**
@@ -31,16 +35,11 @@ public class TilesView extends View {
 
 
 
-    private List<Tuile> rectangles = new LinkedList<Tuile>();
-    private int tileColor = Color.BLUE;
-    private int textColor = Color.WHITE;
+    private Queue<Tuile> rectangles = new ArrayDeque<Tuile>();
     private Drawable mExampleDrawable;
-    private float textSize = 40;
-    private boolean present = false;
     private boolean run = true;
-    Paint pText = new Paint();
-    Paint pTile = new Paint();
     private int compteur;
+    private Map<String, Drawable> images = new HashMap<String, Drawable>();
 
     public TilesView(Context context) {
         super(context);
@@ -59,10 +58,16 @@ public class TilesView extends View {
 
     private void init(AttributeSet attrs, int defStyle) {
         // Load attributes
-        compteur = 0;
+        compteur = 0; //Initialisation du compteur
+
         final TypedArray a = getContext().obtainStyledAttributes(
                 attrs, R.styleable.TilesView, defStyle, 0);
 
+        //Initialisation des images
+        images.put("kyle",getResources().getDrawable(R.drawable.kyle));
+        images.put("stan", getResources().getDrawable(R.drawable.stan));
+        images.put("cartman",getResources().getDrawable(R.drawable.cartman));
+        images.put("kenny", getResources().getDrawable(R.drawable.kenny));
 
         if (a.hasValue(R.styleable.TilesView_exampleDrawable)) {
             mExampleDrawable = a.getDrawable(
@@ -72,37 +77,32 @@ public class TilesView extends View {
         a.recycle();
     }
 
-    public List<Tuile> getRectangles() {
+    public Queue<Tuile> getRectangles() {
         return rectangles;
     }
 
-    public Tuile getTuileFromPos(int x, int y) {
-        for(Iterator<Tuile> it = this.rectangles.listIterator(); it.hasNext(); )
-        {
-            Tuile currentRect = it.next();
-            if(currentRect.getRectangle().contains(x, y))
-            {
-                return currentRect;
-            }
-        }
-        return null;
-    }
-
-    public Rect getRectFromTilesView(int x, int y)
-    {
-        for(Iterator<Tuile> it = this.rectangles.listIterator(); it.hasNext(); )
-        {
-            Tuile currentRect = it.next();
-            if(currentRect.getRectangle().contains(x, y))
-            {
-                return currentRect.getRectangle();
-            }
-        }
-        return null;
+    public Tuile getTuile(){
+        return rectangles.peek();
     }
 
     public void setRun(boolean run) {
         this.run = run;
+    }
+
+    /*Ajout d'une nouvelle tuile dans la file des rectangles*/
+    public void nouvelleTuile(){
+        Random rand = new Random();
+        int posAleatoir = rand.nextInt(4);     //Variable aleatoire qui positionne la nouvelle tuile
+
+        int left = getWidth() * posAleatoir / 5;
+        int top = getTop() - getBottom() /4;
+        int right = getWidth() - getWidth() * (4-posAleatoir) / 5;
+        int bottom = getTop();
+        Rect rect = new Rect(left, top, right, bottom);
+        Tuile tuile = new Tuile(rect);
+        //ajout de la nouvelle tuile dans la collection des tuiles
+        rectangles.offer(tuile);
+        compteur = 0;
     }
 
     @Override
@@ -115,58 +115,19 @@ public class TilesView extends View {
         int contentWidth = getWidth() - paddingLeft - paddingRight;
         int contentHeight = getHeight() - paddingTop - paddingBottom;
 
-        pText.setTextSize(textSize);
-        pText.setColor(textColor);
-        pTile.setColor(tileColor);
-        if(compteur == (getBottom() - getBottom() * 3 / 4)/10){
-            Random rand = new Random();
-            int posAleatoir = rand.nextInt(4);
-            int left = getWidth() * posAleatoir / 5;
-            int top = getBottom();
-            int right = getWidth() - getWidth() * (4-posAleatoir) / 5;
-            int bottom = getBottom() + getBottom()  / 4;
-            Rect rect = new Rect(left, top, right, bottom);
-            Tuile tuile = new Tuile(rect);
-            rectangles.add(tuile);
-            addTile(rect, canvas, tuile.getDrawable());
-            compteur = 0;
-        }
-        if(!present) {
-            //Tile 1
-            int left = 0;
-            int top = getBottom() * 3 / 4;
-            int right = getWidth() / 5;
-            int bottom = getBottom();
-            Rect rect = new Rect(left, top, right, bottom);
-            Tuile tuile = new Tuile(rect);
-            addTile(rect, canvas, tuile.getDrawable());
-            rectangles.add(tuile);
-
-            //Tile 2
-            left = getWidth() * 3 / 5;
-            top = getBottom() - getBottom() * 3 / 4;
-            right = getWidth() - getWidth() / 5;
-            bottom = getBottom() / 2;
-            rect = new Rect(left, top, right, bottom);
-            tuile = new Tuile(rect);
-            addTile(rect, canvas, tuile.getDrawable());
-            rectangles.add(tuile);
-            present = true;
-        }
-        else{
-            if(!rectangles.isEmpty()) {
-                Log.i("TEUB","Size: "+ rectangles.size());
-                ArrayList<Tuile> newRectangles = new ArrayList<Tuile>();
-                for(Tuile tuile : rectangles) {
-                    Rect r = tuile.getRectangle();
-                    r.set(r.left, r.top - 10, r.right, r.bottom - 10);
-                    if(r.bottom > getTop()+60)
-                        newRectangles.add(tuile);
-                    tuile.setRectangle(r);
-                    addTile(r, canvas, tuile.getDrawable());
+        /*Le compteur permet de savoir si il faut creer une nouvelle*/
+        if(compteur == (getBottom() - getBottom() * 3 / 4)/10)
+            nouvelleTuile();
+        if(!rectangles.isEmpty()) {
+            Log.i("TEUB", "Size: " + rectangles.size());
+            for (int i=0; i<rectangles.size(); i++){
+                Tuile tuile = rectangles.remove();
+                Rect r = tuile.getRectangle();
+                r.set(r.left, r.top + 10, r.right, r.bottom + 10);
+                if(r.top < getBottom() - 60){
+                    rectangles.offer(tuile);
                 }
-                rectangles.clear();
-                rectangles = newRectangles;
+                addTile(r, canvas, tuile.getNom());
             }
         }
         // Draw the example drawable on top of the text.
@@ -182,11 +143,13 @@ public class TilesView extends View {
         return run;
     }
 
-    public void addTile(Rect rect, Canvas canvas, int drawable) {
-        Drawable d = getResources().getDrawable(drawable);
-        d.setBounds(rect);
-        d.draw(canvas);
-        //canvas.drawRect(rect, pTile);
+    /*Affiche la tuile a l'ecran, drawable donne l'image à afficher*/
+    public void addTile(Rect rect, Canvas canvas, String drawable) {
+        Drawable d = images.get(drawable);
+        if(d != null) {
+            d.setBounds(rect);
+            d.draw(canvas);
+        }
     }
 
        /**

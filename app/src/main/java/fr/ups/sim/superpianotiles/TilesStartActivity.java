@@ -3,6 +3,7 @@ package fr.ups.sim.superpianotiles;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -68,13 +69,16 @@ public class TilesStartActivity extends Activity {
     private boolean onTouchEventHandler (MotionEvent evt){
         if(evt.getAction()==MotionEvent.ACTION_DOWN) {
             Log.i("TilesView", "Touch event handled");
-            Tuile tuile = this.tilesView.getTuileFromPos((int)evt.getX(),(int) evt.getY());
+            Tuile tuile = this.tilesView.getTuile();
             if(tuile != null)
             {
-                int raw = tuile.getRaw();
-                mPlayer = MediaPlayer.create(this, raw);
-                mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                mPlayer.start();
+                Rect r = tuile.getRectangle();
+                if(r.contains((int) evt.getX(), (int) evt.getY())) {
+                    int raw = tuile.getRaw();
+                    mPlayer = MediaPlayer.create(this, raw);
+                    mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                    mPlayer.start();
+                }
             }
             tilesView.setRun(true);
             Runnable updateRunnable = new Runnable(){
@@ -86,28 +90,11 @@ public class TilesStartActivity extends Activity {
                     }
                 }
             };
-            //tilesView.post(updateRunnable);
             runOnUiThread(updateRunnable);
         }
         if(evt.getAction()==MotionEvent.ACTION_UP){
             tilesView.setRun(false);
         }
-        /*if(evt.getAction()==MotionEvent.ACTION_DOWN){
-            Runnable runnable = new Runnable() {
-                @Override
-                public void run() {
-                    for (int i = 0; i <= 50; i++) {
-                        tilesView.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                tilesView.invalidate();
-                            }
-                        });
-                    }
-                }
-            };
-            new Thread(runnable).start();
-        }*/
         return true;
     }
 }

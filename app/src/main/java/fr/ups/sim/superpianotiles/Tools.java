@@ -31,7 +31,19 @@ public class Tools {
         return -1;
     }
 
+    /*Renvoi un nom de personnage*/
+    public static  String randomNom(){
+        Random r = new Random();
+        int val = r.nextInt(4);
 
+        switch(val){
+            case CARTMAN: return "cartman";
+            case KENNY: return "kenny";
+            case KYLE: return "kyle";
+            case STAN: return "stan";
+        }
+        return null;
+    }
     /* Pour un identifiant d'image, renvoie un identifiant de fichier audio
      * -1 en cas d'echec */
     public static int randomSound(int imageId)
@@ -42,6 +54,22 @@ public class Tools {
             case R.drawable.kenny: return R.raw.kenny1;
             case R.drawable.kyle: return R.raw.kyle;
             case R.drawable.stan: return R.raw.stanley1;
+        }
+        return -1;
+    }
+
+    /* Pour un nom de personnage, renvoie un identifiant de fichier audio
+            * -1 en cas d'echec */
+    public static int randomSound(String nomPerso)
+    {
+        if (nomPerso.equals("cartman")) {
+            return R.raw.cartman1;
+        } else if (nomPerso.equals("kenny")) {
+            return R.raw.kenny1;
+        } else if (nomPerso.equals("kyle")) {
+            return R.raw.kyle;
+        } else if (nomPerso.equals("stan")) {
+            return R.raw.stanley1;
         }
         return -1;
     }

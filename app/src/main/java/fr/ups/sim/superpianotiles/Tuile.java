@@ -7,13 +7,13 @@ import android.graphics.Rect;
  */
 public class Tuile {
     private Rect rectangle;
-    private int drawable;
     private int raw;
+    private String nom;
 
     public Tuile(Rect rectangle) {
-        this.drawable = Tools.randomImage();
+        this.nom = Tools.randomNom();
         this.rectangle = rectangle;
-        this.raw = Tools.randomSound(drawable);
+        this.raw = Tools.randomSound(nom);
     }
 
     public void setRectangle(Rect rectangle) {
@@ -24,8 +24,8 @@ public class Tuile {
         return rectangle;
     }
 
-    public int getDrawable() {
-        return drawable;
+    public String getNom() {
+        return nom;
     }
 
     public int getRaw() {
