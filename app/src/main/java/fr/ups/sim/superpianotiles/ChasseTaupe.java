@@ -14,15 +14,15 @@ import android.view.*;
  */
 public class ChasseTaupe extends Activity{
 
-    TilesView tilesView;
+    ChasseTaupeView tilesView;
     MediaPlayer mPlayer;
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_tiles_start);
+            setContentView(R.layout.activity_chassetaupe);
 
             //ICI - Commentez le code
-            tilesView = (TilesView) findViewById(R.id.view);
+            tilesView = (ChasseTaupeView) findViewById(R.id.view2);
 
             //ICI - Commentez le code
             tilesView.setOnTouchListener(new View.OnTouchListener() {
@@ -61,8 +61,9 @@ public class ChasseTaupe extends Activity{
          * ICI - Commentez le code
          */
         private boolean onTouchEventHandler (MotionEvent evt){
-            //Tuile tuile = this.tilesView.getTuileFromPos((int)evt.getX(),(int) evt.getY());
-            Tuile tuile = this.tilesView.getTuile();
+
+            Tuile tuile = this.tilesView.getTuileFromPos((int)evt.getX(),(int) evt.getY());
+
             if(evt.getAction()==MotionEvent.ACTION_DOWN) {
                 Log.i("TilesView", "Touch event handled");
                 if(tuile != null)
@@ -73,6 +74,11 @@ public class ChasseTaupe extends Activity{
                         mPlayer = MediaPlayer.create(this, raw);
                         mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                         mPlayer.start();
+                        mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                            public void onCompletion(MediaPlayer mp) {
+                                mp.release();
+                            }
+                        });
                     }
                 }
                 tilesView.setRun(true);
@@ -82,11 +88,8 @@ public class ChasseTaupe extends Activity{
                 tilesView.setRun(false);
                 if(tuile != null)
                 {
-                    tilesView.getRectangles().remove(tuile);
-
-                    /*Canvas can = new Canvas();
-                    tuile.getRectangle().set(0, 0, 0, 0);
-                    tilesView.addTile(tuile.getRectangle(), can, tuile.getDrawable());*/
+                    tilesView.setTiles(null);
+                    tilesView.invalidate();
                 }
             }
 
