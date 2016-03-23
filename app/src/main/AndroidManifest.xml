@@ -11,6 +11,9 @@
             android:name=".TilesStartActivity"
             android:label="@string/title_activity_tiles_start" />
         <activity
+            android:name=".ChasseTaupe"
+            android:label="@string/title_activity_tiles_start" />
+        <activity
             android:name=".Menu"
             android:label="@string/title_menu_start" >
             <intent-filter>

@@ -18,9 +18,20 @@ public class Menu extends Activity{
         setContentView(R.layout.activity_menu);
 
 
-        final Button loginButton = (Button) findViewById(R.id.button);
+        final Button defilementButton = (Button) findViewById(R.id.button);
         final Button chasseTaupeButton = (Button) findViewById(R.id.button3);
-        loginButton.setOnClickListener(new View.OnClickListener() {
+
+        chasseTaupeButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Menu.this, ChasseTaupe.class);
+                startActivity(intent);
+            }
+
+        });
+
+        defilementButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {

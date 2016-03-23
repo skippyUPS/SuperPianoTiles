@@ -1,6 +1,8 @@
 package fr.ups.sim.superpianotiles;
 
 import android.app.Activity;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.*;
@@ -10,14 +12,15 @@ import android.view.*;
  */
 public class ChasseTaupe extends Activity{
 
-
+    TilesView tilesView;
+    MediaPlayer mPlayer;
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_tiles_start);
 
             //ICI - Commentez le code
-            TilesView tilesView = (TilesView) findViewById(R.id.view);
+            tilesView = (TilesView) findViewById(R.id.view);
 
             //ICI - Commentez le code
             tilesView.setOnTouchListener(new View.OnTouchListener() {
@@ -56,7 +59,23 @@ public class ChasseTaupe extends Activity{
          * ICI - Commentez le code
          */
         private boolean onTouchEventHandler (MotionEvent evt){
-            Log.i("TilesView", "Touch event handled");
+            if(evt.getAction()==MotionEvent.ACTION_DOWN) {
+                Log.i("TilesView", "Touch event handled");
+                Tuile tuile = this.tilesView.getTuileFromPos((int)evt.getX(),(int) evt.getY());
+                if(tuile != null)
+                {
+                    int raw = tuile.getRaw();
+                    mPlayer = MediaPlayer.create(this, raw);
+                    mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                    mPlayer.start();
+                }
+                tilesView.setRun(true);
+
+            }
+            if(evt.getAction()==MotionEvent.ACTION_UP){
+                tilesView.setRun(false);
+            }
+
             return true;
         }
 }
