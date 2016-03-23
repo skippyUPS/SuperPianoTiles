@@ -63,7 +63,8 @@ public class TilesView extends View {
             int posAleatoir = rand.nextInt(5);     //Variable aleatoire qui positionne la nouvelle tuile
 
             int left = getWidth() * posAleatoir / 5;
-            int top = getBottom()- getBottom() * (4-i) / 4;
+            int top = getBottom()- getBottom() * i / 4;
+            Log.i("TEUB", "top:"+top);
             int right = getWidth() - getWidth() * (4-posAleatoir) / 5;
             int bottom = getBottom() * i /4;
             Rect rect = new Rect(left, top, right, bottom);
