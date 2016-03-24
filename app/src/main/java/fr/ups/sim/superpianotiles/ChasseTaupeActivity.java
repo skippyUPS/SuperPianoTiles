@@ -60,8 +60,8 @@ public class ChasseTaupeActivity extends Activity{
                 if (System.currentTimeMillis() >= temp) {
 
                     dialog.show();
-                    final Button exit = (Button) dialog.findViewById(R.id.button2);
-                    final TextView scoreMort = (TextView) dialog.findViewById(R.id.textView2);
+                    final Button exit = (Button) dialog.findViewById(R.id.button);
+                    final TextView scoreMort = (TextView) dialog.findViewById(R.id.score);
                     scoreMort.setText("Score : "+score);
                     fini = true;
                     exit.setOnClickListener(new View.OnClickListener() {
@@ -72,8 +72,6 @@ public class ChasseTaupeActivity extends Activity{
                         }
 
                     });
-
-
 
 
 
