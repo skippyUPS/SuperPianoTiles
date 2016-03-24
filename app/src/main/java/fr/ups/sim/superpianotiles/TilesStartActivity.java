@@ -18,6 +18,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -33,7 +35,12 @@ public class TilesStartActivity extends Activity {
     TilesView tilesView;
     MediaPlayer mPlayer;
     Boolean start = false;
-    Dialog dialog;
+    Dialog dialogMort;
+    Dialog dialogPause;
+    Dialog dialogCompteur;
+    int score = 0;
+    int compteurBro = 4;
+
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -56,12 +63,68 @@ public class TilesStartActivity extends Activity {
             }
         });
 
-        dialog = new Dialog(tilesView.getContext());
-        dialog.setContentView(R.layout.popup_mort);
+        dialogMort = new Dialog(tilesView.getContext());
+        dialogMort.setContentView(R.layout.popup_mort);
+        final Button boutonOk = (Button) dialogMort.findViewById(R.id.button);
+
+        boutonOk.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+
+        });
+
+        dialogPause = new Dialog(tilesView.getContext());
+        dialogPause.setContentView(R.layout.popup_pause);
+        final Button boutonRetour = (Button) dialogPause.findViewById(R.id.buttonRetour);
+        final Button boutonFini = (Button) dialogPause.findViewById(R.id.buttonFini);
+
+        boutonFini.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                dialogPause.dismiss();
+                end();
+            }
+        });
+
+        dialogCompteur = new Dialog(tilesView.getContext());
+        dialogCompteur.setContentView(R.layout.popup_compteur);
+        boutonRetour.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                reprise();
+            }
+        });
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+    }
+
+    private void reprise(){
+        dialogCompteur.show();
+        dialogPause.dismiss();
+        final TextView textCompteur = (TextView) dialogCompteur.findViewById(R.id.textCompteur);
+        textCompteur.setText("3");
+        Runnable runCompteur = new Runnable() {
+            @Override
+            public void run() {
+                if(compteurBro>0) {
+                    compteurBro--;
+                    textCompteur.setText(String.valueOf(compteurBro));
+                    tilesView.postDelayed(this, 1000);
+                }
+                else {
+
+                    dialogCompteur.dismiss();
+                    tilesView.setRun(true);
+                    run();
+                }
+            }
+        };
+        new Thread(runCompteur);
     }
 
     @Override
@@ -97,14 +160,24 @@ public class TilesStartActivity extends Activity {
                         tilesView.postDelayed(this, 1);//1000 ms / 30fps
                     }
                 } else {
-                    dialog.show();
-                    //finish();
-
+                    /*TextView textScore = (TextView) dialog.findViewById(R.id.score);
+                    textScore.setText("Score: "+ score);
+                    dialog.show();*/
+                    end();
                 }
             }
         };
         runOnUiThread(updateRunnable);
     }
+
+
+    private void end(){
+        TextView textScore = (TextView) dialogMort.findViewById(R.id.score);
+        textScore.setText("Score: "+ score);
+        tilesView.setAlpha(0.5f);
+        dialogMort.show();
+    }
+
 
     /*
      * ICI - Commentez le code
@@ -121,8 +194,9 @@ public class TilesStartActivity extends Activity {
                     mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                     mPlayer.start();
                     tilesView.delTuile();
+                    score ++;
                 } else {
-                    finish();
+                    end();
                 }
             }
             if (!start)
@@ -149,6 +223,12 @@ public class TilesStartActivity extends Activity {
                 Uri.parse("android-app://fr.ups.sim.superpianotiles/http/host/path")
         );
         AppIndex.AppIndexApi.start(client, viewAction);
+    }
+
+    @Override
+    public void onBackPressed() {
+        tilesView.setRun(false);
+        dialogPause.show();
     }
 
     @Override
