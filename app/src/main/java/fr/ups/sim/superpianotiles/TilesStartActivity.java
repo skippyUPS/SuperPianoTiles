@@ -6,14 +6,18 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.UiThread;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -24,8 +28,6 @@ import android.widget.TextView;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
-
-import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
@@ -35,10 +37,12 @@ public class TilesStartActivity extends Activity {
     TilesView tilesView;
     MediaPlayer mPlayer;
     Boolean start = false;
+    Boolean pause = false;
     Dialog dialogMort;
     Dialog dialogPause;
     Dialog dialogCompteur;
     int score = 0;
+    TextView compteurScore;
     int compteurBro = 4;
 
     /**
@@ -62,22 +66,27 @@ public class TilesStartActivity extends Activity {
                 return onTouchEventHandler(event);
             }
         });
-
+        compteurScore = (TextView) this.findViewById(R.id.textScore);
+        compteurScore.setText("0");
         dialogMort = new Dialog(tilesView.getContext());
         dialogMort.setContentView(R.layout.popup_mort);
+        dialogMort.setCanceledOnTouchOutside(false);
         final Button boutonOk = (Button) dialogMort.findViewById(R.id.button);
 
         boutonOk.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
+
                 finish();
+                System.exit(0);
             }
 
         });
 
         dialogPause = new Dialog(tilesView.getContext());
         dialogPause.setContentView(R.layout.popup_pause);
+        dialogPause.setCanceledOnTouchOutside(false);
         final Button boutonRetour = (Button) dialogPause.findViewById(R.id.buttonRetour);
         final Button boutonFini = (Button) dialogPause.findViewById(R.id.buttonFini);
 
@@ -91,6 +100,8 @@ public class TilesStartActivity extends Activity {
 
         dialogCompteur = new Dialog(tilesView.getContext());
         dialogCompteur.setContentView(R.layout.popup_compteur);
+        dialogCompteur.setCanceledOnTouchOutside(false);
+        dialogCompteur.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         boutonRetour.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -108,23 +119,23 @@ public class TilesStartActivity extends Activity {
         dialogPause.dismiss();
         final TextView textCompteur = (TextView) dialogCompteur.findViewById(R.id.textCompteur);
         textCompteur.setText("3");
-        Runnable runCompteur = new Runnable() {
+        final Handler handler = new Handler();
+        final Runnable runCompteur = new Runnable() {
             @Override
             public void run() {
                 if(compteurBro>0) {
                     compteurBro--;
                     textCompteur.setText(String.valueOf(compteurBro));
-                    tilesView.postDelayed(this, 1000);
+                    handler.postDelayed(this, 1000);
                 }
                 else {
-
                     dialogCompteur.dismiss();
                     tilesView.setRun(true);
-                    run();
+                    runTiles();
                 }
             }
         };
-        new Thread(runCompteur);
+        handler.post(runCompteur);
     }
 
     @Override
@@ -150,20 +161,16 @@ public class TilesStartActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void run() {
+    private void runTiles() {
         Runnable updateRunnable = new Runnable() {
             @Override
             public void run() {
                 if (tilesView.isRun()) {
-                    if (tilesView.isRun()) {
-                        tilesView.postInvalidate();
-                        tilesView.postDelayed(this, 1);//1000 ms / 30fps
-                    }
+                    tilesView.postInvalidate();
+                    tilesView.postDelayed(this, 1);//1000 ms / 30fps
                 } else {
-                    /*TextView textScore = (TextView) dialog.findViewById(R.id.score);
-                    textScore.setText("Score: "+ score);
-                    dialog.show();*/
-                    end();
+                    if(!pause)
+                        end();
                 }
             }
         };
@@ -183,7 +190,8 @@ public class TilesStartActivity extends Activity {
      * ICI - Commentez le code
      */
     private boolean onTouchEventHandler(MotionEvent evt) {
-        if (evt.getAction() == MotionEvent.ACTION_DOWN) {
+        Log.i("TEUB", "Bouton : "+ evt.getButtonState());
+        if (evt.getAction() == MotionEvent.ACTION_DOWN ) {
             Log.i("TilesView", "Touch event handled");
             Tuile tuile = this.tilesView.getTuile();
             if (tuile != null) {
@@ -195,12 +203,13 @@ public class TilesStartActivity extends Activity {
                     mPlayer.start();
                     tilesView.delTuile();
                     score ++;
+                    compteurScore.setText(String.valueOf(score));
                 } else {
                     end();
                 }
             }
             if (!start)
-                run();
+                runTiles();
         }
         return true;
     }
@@ -227,6 +236,7 @@ public class TilesStartActivity extends Activity {
 
     @Override
     public void onBackPressed() {
+        pause = true;
         tilesView.setRun(false);
         dialogPause.show();
     }

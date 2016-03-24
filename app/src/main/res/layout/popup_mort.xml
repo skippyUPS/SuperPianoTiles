@@ -10,7 +10,10 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Large Text"
         android:id="@+id/score"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="20dp"
+        android:textSize="30dp"
+        android:textStyle="bold" />
 
     <Button
         android:layout_width="wrap_content"
