@@ -25,7 +25,7 @@ public class Menu extends Activity{
 
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Menu.this, ChasseTaupe.class);
+                Intent intent = new Intent(Menu.this, ChasseTaupeActivity.class);
                 startActivity(intent);
             }
 

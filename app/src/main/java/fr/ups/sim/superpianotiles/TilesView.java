@@ -138,7 +138,6 @@ public class TilesView extends View {
         int contentWidth = getWidth() - paddingLeft - paddingRight;
         int contentHeight = getHeight() - paddingTop - paddingBottom;
         if(!init){
-            Log.i("TEUB","zboub");
             initTuile(canvas);
             nouvelleTuile();
             init = true;
@@ -148,16 +147,17 @@ public class TilesView extends View {
             if (compteur == ((getBottom() - getBottom() * 3 / 4) / 10)+1)
                 nouvelleTuile();
             if (!rectangles.isEmpty()) {
-                Log.i("TEUB", "Size: " + rectangles.size());
                 for (int i = 0; i < rectangles.size(); i++) {
                     Tuile tuile = rectangles.remove();
                     Rect r = tuile.getRectangle();
                     r.set(r.left, r.top + 10, r.right, r.bottom + 10);
-                    if (r.top < getBottom() - 100) {
+                    if (r.top < getBottom()) {
                         rectangles.offer(tuile);
                         addTile(r, canvas, tuile.getNom());
-                    } else
+                    } else {
                         setRun(false);
+                        Log.i("TEUB","Couille "+isRun());
+                    }
                 }
             }
         }
