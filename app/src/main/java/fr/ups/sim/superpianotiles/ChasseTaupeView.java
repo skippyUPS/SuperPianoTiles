@@ -100,16 +100,13 @@ public class ChasseTaupeView  extends View{
 
         Random rand = new Random();
         int posAleatoir = rand.nextInt(5);
-        int posAletoir2 = rand.nextInt(4);
-        /*int left = getWidth() * posAleatoir / 5;
-        int top = getBottom();
-        int right = getWidth() - getWidth() * (4-posAleatoir) / 5;
-        int bottom = getBottom() + getBottom()  / 4;*/
+        int  i = rand.nextInt(4);
+        //Variable aleatoire qui positionne la nouvelle tuile
+
         int left = getWidth() * posAleatoir / 5;
-        ;
-        int top = getBottom() - getBottom() * 3 /4;
+        int top = getBottom() * (3-i) / 4;
         int right = getWidth() - getWidth() * (4-posAleatoir) / 5;
-        int bottom = getBottom() /2;
+        int bottom = getBottom() * (4-i) /4;
 
         Rect rect = new Rect(left, top, right, bottom);
         tiles= new Tuile(rect);

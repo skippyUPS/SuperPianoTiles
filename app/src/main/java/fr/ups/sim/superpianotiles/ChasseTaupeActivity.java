@@ -1,7 +1,9 @@
 package fr.ups.sim.superpianotiles;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.media.AudioManager;
@@ -9,7 +11,9 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.*;
+import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.TextView;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -23,6 +27,10 @@ public class ChasseTaupeActivity extends Activity{
     ChasseTaupeView tilesView;
     MediaPlayer mPlayer;
     private Map<String, MediaPlayer> sound = new HashMap<String, MediaPlayer>();
+    long temp ;
+    int i, score;
+    Dialog dialog;
+    boolean fini =false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,23 +39,59 @@ public class ChasseTaupeActivity extends Activity{
         sound.put("stan", MediaPlayer.create(this, R.raw.stanley1));
         sound.put("cartman", MediaPlayer.create(this, R.raw.cartman1));
         sound.put("kenny", MediaPlayer.create(this, R.raw.kenny1));
-
+        /*on recupere le temps en UTC depuis 1970 en ms*/
+        temp = System.currentTimeMillis() + 1000;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chassetaupe);
-
+        TextView afficheScore = (TextView) findViewById(R.id.score);
         //ICI - Commentez le code
         tilesView = (ChasseTaupeView) findViewById(R.id.view2);
 
-
+        dialog = new Dialog(tilesView.getContext());
+        dialog.setContentView(R.layout.popup_mort);
 
         //ICI - Commentez le code
+
+
         tilesView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+
+                if (System.currentTimeMillis() >= temp) {
+
+                    dialog.show();
+                    final Button exit = (Button) dialog.findViewById(R.id.button2);
+                    final TextView scoreMort = (TextView) dialog.findViewById(R.id.textView2);
+                    scoreMort.setText("Score : "+score);
+                    fini = true;
+                    exit.setOnClickListener(new View.OnClickListener() {
+
+                        @Override
+                        public void onClick(View v) {
+                            finish();
+                        }
+
+                    });
+
+
+
+
+
+                }
+
                 return onTouchEventHandler(event);
 
             }
         });
+
+
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
     }
 
     @Override
@@ -80,10 +124,14 @@ public class ChasseTaupeActivity extends Activity{
 
         Tuile tuile = this.tilesView.getTuileFromPos((int)evt.getX(),(int) evt.getY());
 
+
         if(evt.getAction()==MotionEvent.ACTION_DOWN) {
             Log.i("TilesView", "Touch event handled");
             if(tuile != null)
             {
+                /* on reduit le delais de la prochaine brique*/
+                i+=50;
+                temp =  System.currentTimeMillis()+1000 - i;
                 Rect r = tuile.getRectangle();
                 if(r.contains((int) evt.getX(), (int) evt.getY())) {
 
@@ -105,13 +153,20 @@ public class ChasseTaupeActivity extends Activity{
             }
             if(tuile != null)
             {
+                score += 50;
+                final TextView affiche = (TextView) findViewById(R.id.score);
+                affiche.setText(""+score);
                 tilesView.setTiles(null);
                 tilesView.invalidate();
             }
-        }
-        if(evt.getAction()==MotionEvent.ACTION_UP){
+
 
         }
+        if ( fini)
+        {
+            
+        }
+
 
         return true;
     }
