@@ -27,7 +27,6 @@
             android:text="Chasse Taupe"
             android:id="@+id/button3"
             android:layout_centerVertical="true"
-            android:layout_alignEnd="@+id/button"
             android:background="#cac9c9" />
 
     </RelativeLayout>

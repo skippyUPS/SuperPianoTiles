@@ -10,6 +10,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.shapes.RoundRectShape;
+import android.media.MediaPlayer;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -28,6 +29,8 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Random;
 
+import static fr.ups.sim.superpianotiles.R.*;
+
 /**
  * Custom view that displays tiles
  */
@@ -39,8 +42,9 @@ public class TilesView extends View {
     private Drawable mExampleDrawable;
     private boolean run = true;
     private int compteur;
-    private Map<String, Drawable> images = new HashMap<String, Drawable>();
     boolean init = false;
+    private Map<String, Drawable> images = new HashMap<String, Drawable>();
+    private Map<String, MediaPlayer> sound = new HashMap<String, MediaPlayer>();
 
     public TilesView(Context context) {
         super(context);
@@ -79,17 +83,22 @@ public class TilesView extends View {
         compteur = 0; //Initialisation du compteur
 
         final TypedArray a = getContext().obtainStyledAttributes(
-                attrs, R.styleable.TilesView, defStyle, 0);
+                attrs, styleable.TilesView, defStyle, 0);
 
         //Initialisation des images
-        images.put("kyle",getResources().getDrawable(R.drawable.kyle));
-        images.put("stan", getResources().getDrawable(R.drawable.stan));
-        images.put("cartman",getResources().getDrawable(R.drawable.cartman));
-        images.put("kenny", getResources().getDrawable(R.drawable.kenny));
+        images.put("kyle",getResources().getDrawable(drawable.kyle));
+        images.put("stan", getResources().getDrawable(drawable.stan));
+        images.put("cartman",getResources().getDrawable(drawable.cartman));
+        images.put("kenny", getResources().getDrawable(drawable.kenny));
 
-        if (a.hasValue(R.styleable.TilesView_exampleDrawable)) {
-            mExampleDrawable = a.getDrawable(
-                    R.styleable.TilesView_exampleDrawable);
+        /* Initialisation du son */
+        sound.put("kyle", MediaPlayer.create(this.getContext(), raw.kyle));
+        sound.put("stan", MediaPlayer.create(this.getContext(), raw.stanley1));
+        sound.put("cartman", MediaPlayer.create(this.getContext(), raw.cartman1));
+        sound.put("kenny", MediaPlayer.create(this.getContext(), raw.kenny1));
+
+        if (a.hasValue(styleable.TilesView_exampleDrawable)) {
+            mExampleDrawable = a.getDrawable(styleable.TilesView_exampleDrawable);
             mExampleDrawable.setCallback(this);
         }
         a.recycle();
@@ -101,6 +110,10 @@ public class TilesView extends View {
 
     public Tuile getTuile(){
         return rectangles.peek();
+    }
+
+    public Map<String, MediaPlayer> getSound() {
+        return sound;
     }
 
     public void setRun(boolean run) {
