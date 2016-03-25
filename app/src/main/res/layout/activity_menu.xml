@@ -1,34 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:weightSum="1">
-
-    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center_horizontal"
-        android:background="@drawable/logo2">
+        android:background="@drawable/logo2"
+    android:orientation="vertical"
+    android:gravity="center_vertical">
 
-        <Button
-            android:layout_width="200dp"
-            android:layout_height="75dp"
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Chasse Taupe"
+        android:id="@+id/button3"
+        android:layout_margin="20dp"
+        android:layout_centerVertical="true"
+        android:layout_column="0" />
+
+    <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
             android:text="Mode Defilement"
             android:id="@+id/button"
             android:visibility="visible"
-            android:layout_marginTop="105dp"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:background="#cac9c9" />
+            android:layout_above="@+id/button3"
+            android:layout_alignParentStart="true"
+            android:layout_margin="20dp"
+            android:layout_centerVertical="true" />
 
-        <Button
-            android:layout_width="200dp"
-            android:layout_height="75dp"
-            android:text="Chasse Taupe"
-            android:id="@+id/button3"
-            android:layout_centerVertical="true"
-            android:layout_alignEnd="@+id/button"
-            android:background="#cac9c9" />
-
-    </RelativeLayout>
 </LinearLayout>
