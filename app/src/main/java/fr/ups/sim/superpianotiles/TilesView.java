@@ -10,7 +10,6 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.shapes.RoundRectShape;
-import android.media.MediaPlayer;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -29,8 +28,6 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Random;
 
-import static fr.ups.sim.superpianotiles.R.*;
-
 /**
  * Custom view that displays tiles
  */
@@ -38,13 +35,13 @@ public class TilesView extends View {
 
 
 
-    private Queue<Tuile> rectangles = new ArrayDeque<Tuile>();
+    private Deque<Tuile> rectangles = new ArrayDeque<Tuile>();
     private Drawable mExampleDrawable;
     private boolean run = true;
     private int compteur;
-    boolean init = false;
     private Map<String, Drawable> images = new HashMap<String, Drawable>();
-    private Map<String, MediaPlayer> sound = new HashMap<String, MediaPlayer>();
+    boolean init = false;
+    private int score = 0;
 
     public TilesView(Context context) {
         super(context);
@@ -83,22 +80,17 @@ public class TilesView extends View {
         compteur = 0; //Initialisation du compteur
 
         final TypedArray a = getContext().obtainStyledAttributes(
-                attrs, styleable.TilesView, defStyle, 0);
+                attrs, R.styleable.TilesView, defStyle, 0);
 
         //Initialisation des images
-        images.put("kyle",getResources().getDrawable(drawable.kyle));
-        images.put("stan", getResources().getDrawable(drawable.stan));
-        images.put("cartman",getResources().getDrawable(drawable.cartman));
-        images.put("kenny", getResources().getDrawable(drawable.kenny));
+        images.put("kyle",getResources().getDrawable(R.drawable.kyle));
+        images.put("stan", getResources().getDrawable(R.drawable.stan));
+        images.put("cartman",getResources().getDrawable(R.drawable.cartman));
+        images.put("kenny", getResources().getDrawable(R.drawable.kenny));
 
-        /* Initialisation du son */
-        sound.put("kyle", MediaPlayer.create(this.getContext(), raw.kyle));
-        sound.put("stan", MediaPlayer.create(this.getContext(), raw.stanley1));
-        sound.put("cartman", MediaPlayer.create(this.getContext(), raw.cartman1));
-        sound.put("kenny", MediaPlayer.create(this.getContext(), raw.kenny1));
-
-        if (a.hasValue(styleable.TilesView_exampleDrawable)) {
-            mExampleDrawable = a.getDrawable(styleable.TilesView_exampleDrawable);
+        if (a.hasValue(R.styleable.TilesView_exampleDrawable)) {
+            mExampleDrawable = a.getDrawable(
+                    R.styleable.TilesView_exampleDrawable);
             mExampleDrawable.setCallback(this);
         }
         a.recycle();
@@ -110,10 +102,6 @@ public class TilesView extends View {
 
     public Tuile getTuile(){
         return rectangles.peek();
-    }
-
-    public Map<String, MediaPlayer> getSound() {
-        return sound;
     }
 
     public void setRun(boolean run) {
@@ -138,6 +126,7 @@ public class TilesView extends View {
 
     public void delTuile(){
         rectangles.remove();
+        score ++;
     }
 
     @Override
@@ -157,13 +146,16 @@ public class TilesView extends View {
         }
         else {
         /*Le compteur permet de savoir si il faut creer une nouvelle*/
-            if (compteur == ((getBottom() - getBottom() * 3 / 4) / 10)+1)
+            if (rectangles.getLast().getRectangle().top > 0) {
                 nouvelleTuile();
+                Log.i("TEUB","TOP NOUVELLE :"+rectangles.getLast().getRectangle().top);
+            }
             if (!rectangles.isEmpty()) {
+                Log.i("TEUB","TOP :"+rectangles.getLast().getRectangle().top);
                 for (int i = 0; i < rectangles.size(); i++) {
                     Tuile tuile = rectangles.remove();
                     Rect r = tuile.getRectangle();
-                    r.set(r.left, r.top + 10, r.right, r.bottom + 10);
+                    r.set(r.left, r.top + 10 + (score/10), r.right, r.bottom + 10 + (score/10));
                     if (r.top < getBottom()) {
                         rectangles.offer(tuile);
                         addTile(r, canvas, tuile.getNom());
@@ -180,7 +172,7 @@ public class TilesView extends View {
                     paddingLeft + contentWidth, paddingTop + contentHeight);
             mExampleDrawable.draw(canvas);
         }
-        compteur ++;
+        compteur += 1;
     }
 
     public boolean isRun() {
