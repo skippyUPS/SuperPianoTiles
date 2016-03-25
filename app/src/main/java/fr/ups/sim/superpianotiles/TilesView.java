@@ -35,12 +35,13 @@ public class TilesView extends View {
 
 
 
-    private Queue<Tuile> rectangles = new ArrayDeque<Tuile>();
+    private Deque<Tuile> rectangles = new ArrayDeque<Tuile>();
     private Drawable mExampleDrawable;
     private boolean run = true;
     private int compteur;
     private Map<String, Drawable> images = new HashMap<String, Drawable>();
     boolean init = false;
+    private int score = 0;
 
     public TilesView(Context context) {
         super(context);
@@ -125,6 +126,7 @@ public class TilesView extends View {
 
     public void delTuile(){
         rectangles.remove();
+        score ++;
     }
 
     @Override
@@ -144,13 +146,16 @@ public class TilesView extends View {
         }
         else {
         /*Le compteur permet de savoir si il faut creer une nouvelle*/
-            if (compteur == ((getBottom() - getBottom() * 3 / 4) / 10)+1)
+            if (rectangles.getLast().getRectangle().top > 0) {
                 nouvelleTuile();
+                Log.i("TEUB","TOP NOUVELLE :"+rectangles.getLast().getRectangle().top);
+            }
             if (!rectangles.isEmpty()) {
+                Log.i("TEUB","TOP :"+rectangles.getLast().getRectangle().top);
                 for (int i = 0; i < rectangles.size(); i++) {
                     Tuile tuile = rectangles.remove();
                     Rect r = tuile.getRectangle();
-                    r.set(r.left, r.top + 10, r.right, r.bottom + 10);
+                    r.set(r.left, r.top + 10 + (score/10), r.right, r.bottom + 10 + (score/10));
                     if (r.top < getBottom()) {
                         rectangles.offer(tuile);
                         addTile(r, canvas, tuile.getNom());
@@ -167,7 +172,7 @@ public class TilesView extends View {
                     paddingLeft + contentWidth, paddingTop + contentHeight);
             mExampleDrawable.draw(canvas);
         }
-        compteur ++;
+        compteur += 1;
     }
 
     public boolean isRun() {

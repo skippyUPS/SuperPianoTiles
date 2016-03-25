@@ -22,12 +22,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
@@ -45,6 +50,8 @@ public class TilesStartActivity extends Activity {
     TextView compteurScore;
     int compteurBro = 4;
 
+    private Map<String, MediaPlayer> sound = new HashMap<String, MediaPlayer>();
+
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -55,6 +62,13 @@ public class TilesStartActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        /* Initialisation du son */
+        sound.put("kyle", MediaPlayer.create(this, R.raw.kyle));
+        sound.put("stan", MediaPlayer.create(this, R.raw.stanley1));
+        sound.put("cartman", MediaPlayer.create(this, R.raw.cartman1));
+        sound.put("kenny", MediaPlayer.create(this, R.raw.kenny1));
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tiles_start);
         //ICI - Commentez le code
@@ -69,6 +83,7 @@ public class TilesStartActivity extends Activity {
         compteurScore = (TextView) this.findViewById(R.id.textScore);
         compteurScore.setText("0");
         dialogMort = new Dialog(tilesView.getContext());
+        dialogMort.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialogMort.setContentView(R.layout.popup_mort);
         dialogMort.setCanceledOnTouchOutside(false);
         final Button boutonOk = (Button) dialogMort.findViewById(R.id.button);
@@ -85,6 +100,7 @@ public class TilesStartActivity extends Activity {
         });
 
         dialogPause = new Dialog(tilesView.getContext());
+        dialogPause.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialogPause.setContentView(R.layout.popup_pause);
         dialogPause.setCanceledOnTouchOutside(false);
         final Button boutonRetour = (Button) dialogPause.findViewById(R.id.buttonRetour);
@@ -117,6 +133,7 @@ public class TilesStartActivity extends Activity {
     private void reprise(){
         dialogCompteur.show();
         dialogPause.dismiss();
+        compteurBro = 4;
         final TextView textCompteur = (TextView) dialogCompteur.findViewById(R.id.textCompteur);
         textCompteur.setText("3");
         final Handler handler = new Handler();
@@ -125,8 +142,14 @@ public class TilesStartActivity extends Activity {
             public void run() {
                 if(compteurBro>0) {
                     compteurBro--;
-                    textCompteur.setText(String.valueOf(compteurBro));
-                    handler.postDelayed(this, 1000);
+                    if(compteurBro==0) {
+                        textCompteur.setText("GO");
+                        handler.postDelayed(this, 300);
+                    }
+                    else {
+                        textCompteur.setText(String.valueOf(compteurBro));
+                        handler.postDelayed(this, 1000);
+                    }
                 }
                 else {
                     dialogCompteur.dismiss();
@@ -197,10 +220,20 @@ public class TilesStartActivity extends Activity {
             if (tuile != null) {
                 Rect r = tuile.getRectangle();
                 if (r.contains((int) evt.getX(), (int) evt.getY())) {
-                    int raw = tuile.getRaw();
-                    mPlayer = MediaPlayer.create(this, raw);
-                    mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                    /* Instructions nécessaire pour jouer un son
+                    (cf. Diagramme d'état de la classe MediaPlayer */
+                    mPlayer = sound.get(tuile.getNom());
                     mPlayer.start();
+                    mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                        public void onCompletion(MediaPlayer mp) {
+                            mp.stop();
+                            try {
+                                mp.prepare();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
                     tilesView.delTuile();
                     score ++;
                     compteurScore.setText(String.valueOf(score));
