@@ -1,25 +1,16 @@
 package fr.ups.sim.superpianotiles;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
-import android.support.annotation.UiThread;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -36,8 +27,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
 
 public class TilesStartActivity extends Activity {
 
@@ -67,7 +56,6 @@ public class TilesStartActivity extends Activity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE); //Supprime affichage du titre.
 
         /* Initialisation du son */
         sound.put("kyle", MediaPlayer.create(this, R.raw.kyle));
@@ -116,7 +104,6 @@ public class TilesStartActivity extends Activity {
                 data.putExtra("fr.ups.sim.superpianotiles.SON", soundButton.isChecked());
                 setResult(RESULT_OK, data);
                 finish();
-                //System.exit(0);
             }
 
         });
@@ -138,7 +125,7 @@ public class TilesStartActivity extends Activity {
 
         dialogCompteur = new Dialog(tilesView.getContext());
         dialogCompteur.setContentView(R.layout.popup_compteur);
-        dialogCompteur.setCanceledOnTouchOutside(false);
+        dialogCompteur.setCancelable(false);
         dialogCompteur.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         boutonRetour.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -153,6 +140,11 @@ public class TilesStartActivity extends Activity {
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     private void reprise(){
@@ -172,6 +164,7 @@ public class TilesStartActivity extends Activity {
                         handler.postDelayed(this, 300);
                     }
                     else {
+
                         textCompteur.setText(String.valueOf(compteurBro));
                         handler.postDelayed(this, 1000);
                     }
@@ -305,7 +298,7 @@ public class TilesStartActivity extends Activity {
     @Override
     public void onStop() {
         super.onStop();
-
+        onBackPressed();
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         Action viewAction = Action.newAction(

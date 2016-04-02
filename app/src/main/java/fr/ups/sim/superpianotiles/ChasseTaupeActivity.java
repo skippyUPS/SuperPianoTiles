@@ -90,7 +90,6 @@ public class ChasseTaupeActivity extends Activity{
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 return onTouchEventHandler(event);
-
             }
         });
 

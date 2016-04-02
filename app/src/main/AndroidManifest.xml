@@ -10,6 +10,7 @@
         <activity
             android:name=".TilesStartActivity"
             android:label="@string/title_activity_tiles_start"
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".ChasseTaupeActivity"
@@ -18,7 +19,8 @@
         <activity
             android:name=".Menu"
             android:label="@string/title_menu_start"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
