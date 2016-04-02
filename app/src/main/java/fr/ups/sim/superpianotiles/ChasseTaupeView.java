@@ -30,6 +30,7 @@ public class ChasseTaupeView  extends View{
     private Map<String, Drawable> images = new HashMap<String, Drawable>();
 
 
+
     public ChasseTaupeView(Context context) {
         super(context);
         init(null, 0);
@@ -44,6 +45,11 @@ public class ChasseTaupeView  extends View{
         super(context, attrs, defStyle);
         init(attrs, defStyle);
     }
+
+    public boolean isRun() {
+        return run;
+    }
+
 
     private void init(AttributeSet attrs, int defStyle) {
         // Load attributes

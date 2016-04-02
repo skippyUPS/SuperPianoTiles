@@ -48,8 +48,11 @@ public class Menu extends Activity{
             @Override
             public void onClick(View v) {
                 son.stop();
+                boolean soundEnable = soundButton.isChecked();
                 Intent intent = new Intent(Menu.this, ChasseTaupeActivity.class);
-                startActivity(intent);
+                intent.putExtra("fr.ups.sim.superpianotiles.SON", soundEnable);
+                startActivityForResult(intent, 0);
+
             }
 
         });
@@ -64,7 +67,7 @@ public class Menu extends Activity{
                 Intent intent = new Intent(Menu.this, TilesStartActivity.class);
                 intent.putExtra("fr.ups.sim.superpianotiles.SON", soundEnable);
                 startActivityForResult(intent, 0);
-                soundButton.setChecked(intent.getBooleanExtra("fr.ups.sim.superpianotiles.SON", true));
+
             }
 
         });
@@ -72,9 +75,6 @@ public class Menu extends Activity{
 
     }
 
-    private void initialisation(){
-        init = true;
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

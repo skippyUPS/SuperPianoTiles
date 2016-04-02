@@ -61,7 +61,7 @@ public class TilesStartActivity extends Activity {
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
-    //Dialog dialog = new Dialog(this);
+    //Dialog dialogFin = new Dialog(this);
     //Intent intent = new Intent(TilesStartActivity.this, Menu.class);
 
     @Override
@@ -239,7 +239,7 @@ public class TilesStartActivity extends Activity {
      * ICI - Commentez le code
      */
     private boolean onTouchEventHandler(MotionEvent evt) {
-        Log.i("TEUB", "Bouton : "+ evt.getButtonState());
+
         if (evt.getAction() == MotionEvent.ACTION_DOWN ) {
             Log.i("TilesView", "Touch event handled");
             Tuile tuile = this.tilesView.getTuile();
