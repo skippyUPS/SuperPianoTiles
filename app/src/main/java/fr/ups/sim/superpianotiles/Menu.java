@@ -21,6 +21,7 @@ import java.io.IOException;
 public class Menu extends Activity{
     MediaPlayer son;
     ToggleButton soundButton;
+    Boolean init = false;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,12 +64,16 @@ public class Menu extends Activity{
                 Intent intent = new Intent(Menu.this, TilesStartActivity.class);
                 intent.putExtra("fr.ups.sim.superpianotiles.SON", soundEnable);
                 startActivityForResult(intent, 0);
-                //soundButton.setChecked(intent.getBooleanExtra("fr.ups.sim.superpianotiles.SON", true));
+                soundButton.setChecked(intent.getBooleanExtra("fr.ups.sim.superpianotiles.SON", true));
             }
 
         });
 
 
+    }
+
+    private void initialisation(){
+        init = true;
     }
 
     @Override

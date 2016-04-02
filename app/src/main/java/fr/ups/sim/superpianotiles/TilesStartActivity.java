@@ -1,16 +1,25 @@
 package fr.ups.sim.superpianotiles;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
+import android.support.annotation.UiThread;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -27,22 +36,25 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 public class TilesStartActivity extends Activity {
 
     private final String PROGRESS_BAR_INCREMENT = "ProgreesBarIncrementId";
     TilesView tilesView;
     MediaPlayer mPlayer;
-    Boolean start = false; //Permet de savoir si le jeu doit tourner
-    Boolean pause = false; //Permet de savoir si le jeu est en pause
+    Boolean start = false;
+    Boolean pause = false;
     Dialog dialogMort;
     Dialog dialogPause;
     Dialog dialogCompteur;
-    TextView compteurScore; //affiche le score a l'ecran
-    int score;  //score du jeu
-    int compteurReprise; //compteur afficher lors d'une reprise, utile pour le thread
-    ToggleButton soundButton; //toggleButton permettant de savoir si le jeu est mute
-    private Map<String, MediaPlayer> sound = new HashMap<String, MediaPlayer>(); //HashMap qui stock tout les sons du jeu
+    int score;
+    TextView compteurScore;
+    int compteurBro = 4;
+    ToggleButton soundButton;
+
+    private Map<String, MediaPlayer> sound = new HashMap<String, MediaPlayer>();
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -55,10 +67,7 @@ public class TilesStartActivity extends Activity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        /*Initialisation des variables*/
-        score = 0;
-        compteurReprise = 4;
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE); //Supprime affichage du titre.
 
         /* Initialisation du son */
         sound.put("kyle", MediaPlayer.create(this, R.raw.kyle));
@@ -66,63 +75,59 @@ public class TilesStartActivity extends Activity {
         sound.put("cartman", MediaPlayer.create(this, R.raw.cartman1));
         sound.put("kenny", MediaPlayer.create(this, R.raw.kenny1));
 
+        score = 0;
         setContentView(R.layout.activity_tiles_start);
-        /*On recupère la vue des tuiles pour pouvoir la modifier*/
+        //ICI - Commentez le code
         tilesView = (TilesView) findViewById(R.id.view);
-
-        /*Text view affiche au milieu de l'ecran pour dire au joueur de toucher la tuile pour commencer*/
         final TextView touche = (TextView) this.findViewById(R.id.textViewTouche);
 
-        /*Ajout du listener permettant de detecter si le joueur a toucher l'ecran et va utiliser la
-        * fonction onTouchEventHandler modifier plus bas*/
+        //ICI - Commentez le code
         tilesView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                /*Efface le text de l'ecran*/
-                touche.setAlpha(0);
+                touche.setText("");
                 return onTouchEventHandler(event);
             }
         });
         compteurScore = (TextView) this.findViewById(R.id.textScore);
-        compteurScore.setText(String.valueOf(score));
-
-        /*Fenetre de dialogue affiche lorsque le joueur a perdu*/
+        compteurScore.setText("0");
         dialogMort = new Dialog(tilesView.getContext());
         dialogMort.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialogMort.setContentView(R.layout.popup_mort);
         dialogMort.setCancelable(false);
-        /*Les deux boutons de la fenetre de dialogue*/
         final Button boutonOk = (Button) dialogMort.findViewById(R.id.button);
         final Button boutonRecommencer = (Button) dialogMort.findViewById(R.id.buttonRecommencer);
-        /*Listener qui permet de recommencer une partie quand le joueur appui sur le bouton "Recommencer"*/
+
         boutonRecommencer.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 dialogMort.dismiss();
                 onCreate(savedInstanceState);
             }
+
         });
-        /*Listener qui permet de quitter le jeu et revenir au menu quand le joueur appui sur le bouton "OK"*/
+
         boutonOk.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 Intent data = new Intent();
                 data.putExtra("fr.ups.sim.superpianotiles.SON", soundButton.isChecked());
                 setResult(RESULT_OK, data);
                 finish();
+                //System.exit(0);
             }
+
         });
 
-        /*Fenetre de dialogue qui s'affiche quand le joueur fait pause*/
         dialogPause = new Dialog(tilesView.getContext());
         dialogPause.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialogPause.setContentView(R.layout.popup_pause);
         dialogPause.setCancelable(false);
         final Button boutonRetour = (Button) dialogPause.findViewById(R.id.buttonRetour);
         final Button boutonFini = (Button) dialogPause.findViewById(R.id.buttonFini);
-        soundButton = (ToggleButton) dialogPause.findViewById(R.id.toggleButtonMusicPause);
-        soundButton.setChecked(getIntent().getBooleanExtra("fr.ups.sim.superpianotiles.SON", false));
-        /*Si le joueur appuie sur le bouton "Quitter" alors il y aura les même effet que s'il avait perdu*/
+
         boutonFini.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -130,8 +135,11 @@ public class TilesStartActivity extends Activity {
                 end();
             }
         });
-        /*Si le joueur appuie sur "Retour" alors la fentre de pause disparait et un compteur apparait
-        * avant de pourvoir recommencer a jouer*/
+
+        dialogCompteur = new Dialog(tilesView.getContext());
+        dialogCompteur.setContentView(R.layout.popup_compteur);
+        dialogCompteur.setCanceledOnTouchOutside(false);
+        dialogCompteur.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         boutonRetour.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -139,93 +147,32 @@ public class TilesStartActivity extends Activity {
             }
         });
 
-        /*Fenetre de dialogue qui ne va servir qu'a afficher le compteur au milieu de l'ecran
-        * a la reprise d'une pause, permettant d'assombrir le reste de l'ecran*/
-        dialogCompteur = new Dialog(tilesView.getContext());
-        dialogCompteur.setContentView(R.layout.popup_compteur);
-        dialogCompteur.setCancelable(false);
-        dialogCompteur.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        soundButton = (ToggleButton) dialogPause.findViewById(R.id.toggleButtonMusicPause);
+        soundButton.setChecked(getIntent().getBooleanExtra("fr.ups.sim.superpianotiles.SON", false));
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onBackPressed() {
-        pause = true;
-        tilesView.setRun(false);
-        dialogPause.show();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "TilesStart Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app deep link URI is correct.
-                Uri.parse("android-app://fr.ups.sim.superpianotiles/http/host/path")
-        );
-        AppIndex.AppIndexApi.start(client, viewAction);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        onBackPressed();
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "TilesStart Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app deep link URI is correct.
-                Uri.parse("android-app://fr.ups.sim.superpianotiles/http/host/path")
-        );
-        AppIndex.AppIndexApi.end(client, viewAction);
-        client.disconnect();
-    }
-
-    /*
-    * Fonction utilise lors de la reprise du jeu permettant d'afficher le compteur avant de reprendre
-    * */
     private void reprise(){
         dialogCompteur.show();
         dialogPause.dismiss();
-        compteurReprise = 4;
+        compteurBro = 4;
         final TextView textCompteur = (TextView) dialogCompteur.findViewById(R.id.textCompteur);
         textCompteur.setText("3");
-
-        /*Handler qui fait tourner le compteur*/
         final Handler handler = new Handler();
         final Runnable runCompteur = new Runnable() {
             @Override
             public void run() {
-                if(compteurReprise>0) {
-                    compteurReprise--;
-                    if(compteurReprise==0) {
+                if(compteurBro>0) {
+                    compteurBro--;
+                    if(compteurBro==0) {
                         textCompteur.setText("GO");
                         handler.postDelayed(this, 300);
                     }
                     else {
-                        textCompteur.setText(String.valueOf(compteurReprise));
+                        textCompteur.setText(String.valueOf(compteurBro));
                         handler.postDelayed(this, 1000);
                     }
                 }
@@ -239,9 +186,29 @@ public class TilesStartActivity extends Activity {
         handler.post(runCompteur);
     }
 
-    /*
-    * Fonction utilise pour faire tourner le jeu (defiler les tuile)
-    * */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_tiles_start, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            // ICI - A compléter pour déclencher l'ouverture de l'écran de paramétrage
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     private void runTiles() {
         Runnable updateRunnable = new Runnable() {
             @Override
@@ -258,9 +225,7 @@ public class TilesStartActivity extends Activity {
         runOnUiThread(updateRunnable);
     }
 
-    /*
-    * Fonction utilise lors de la fin du jeu
-    * */
+
     private void end(){
         tilesView.setRun(false);
         TextView textScore = (TextView) dialogMort.findViewById(R.id.score);
@@ -274,7 +239,7 @@ public class TilesStartActivity extends Activity {
      * ICI - Commentez le code
      */
     private boolean onTouchEventHandler(MotionEvent evt) {
-        Log.i("TEUB", "Bouton : " + evt.getButtonState());
+        Log.i("TEUB", "Bouton : "+ evt.getButtonState());
         if (evt.getAction() == MotionEvent.ACTION_DOWN ) {
             Log.i("TilesView", "Touch event handled");
             Tuile tuile = this.tilesView.getTuile();
@@ -308,5 +273,52 @@ public class TilesStartActivity extends Activity {
                 runTiles();
         }
         return true;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "TilesStart Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://fr.ups.sim.superpianotiles/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(client, viewAction);
+    }
+
+    @Override
+    public void onBackPressed() {
+        pause = true;
+        tilesView.setRun(false);
+        dialogPause.show();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "TilesStart Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://fr.ups.sim.superpianotiles/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(client, viewAction);
+        client.disconnect();
     }
 }
