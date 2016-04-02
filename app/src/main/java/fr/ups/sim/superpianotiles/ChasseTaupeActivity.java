@@ -9,6 +9,7 @@ import android.graphics.Rect;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.*;
 import android.widget.Button;
@@ -48,7 +49,9 @@ public class ChasseTaupeActivity extends Activity{
         tilesView = (ChasseTaupeView) findViewById(R.id.view2);
 
         dialog = new Dialog(tilesView.getContext());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.popup_mort);
+        dialog.setCancelable(false);
 
         //ICI - Commentez le code
 
@@ -58,11 +61,10 @@ public class ChasseTaupeActivity extends Activity{
             public boolean onTouch(View v, MotionEvent event) {
 
                 if (System.currentTimeMillis() >= temp) {
-
                     dialog.show();
                     final Button exit = (Button) dialog.findViewById(R.id.button);
                     final TextView scoreMort = (TextView) dialog.findViewById(R.id.score);
-                    scoreMort.setText("Score : "+score);
+                    scoreMort.setText(String.valueOf(score));
                     fini = true;
                     exit.setOnClickListener(new View.OnClickListener() {
 
@@ -72,9 +74,6 @@ public class ChasseTaupeActivity extends Activity{
                         }
 
                     });
-
-
-
                 }
 
                 return onTouchEventHandler(event);
@@ -84,6 +83,26 @@ public class ChasseTaupeActivity extends Activity{
 
 
 
+        /*Handler pour animation temps et alpha des tuiles*/
+        final Handler handlerTimer = new Handler();
+        handlerTimer.postDelayed(new Runnable() {
+            private long time = 100;
+            private float alpha = 1;
+            @Override
+            public void run() {
+                if(alpha > 0) {
+                    alpha -= 0.1;
+                    tilesView.setAlpha(alpha);
+                    handlerTimer.postDelayed(this, time);
+                }
+                else{
+                    final TextView affiche = (TextView) findViewById(R.id.score);
+                    TextView text = (TextView) dialog.findViewById(R.id.score);
+                    text.setText("Score : " + score);
+                    dialog.show();
+                }
+            }
+        }, 1000);
     }
 
     @Override

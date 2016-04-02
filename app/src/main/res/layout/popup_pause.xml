@@ -16,9 +16,10 @@
             android:text="PAUSE"
             android:id="@+id/textView"
             android:layout_column="0"
-            android:layout_span="2"
+            android:layout_span="3"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="10dp" />
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="0dp" />
     </TableRow>
 
     <TableRow
@@ -32,7 +33,8 @@
             android:text="Reprendre"
             android:id="@+id/buttonRetour"
             android:layout_marginTop="0dp"
-            android:layout_column="0" />
+            android:layout_column="0"
+            android:layout_marginLeft="5dp" />
 
         <Button
             android:layout_width="wrap_content"
@@ -41,6 +43,19 @@
             android:id="@+id/buttonFini"
             android:layout_marginTop="0dp"
             android:layout_column="1" />
+
+        <ToggleButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ToggleButtonMusic"
+            android:id="@+id/toggleButtonMusicPause"
+            android:layout_column="2"
+            android:checked="@bool/sound"
+            android:layout_marginTop="0dp"
+            android:layout_gravity="center"
+            android:layout_marginRight="5dp"
+            android:textOff="Son OFF"
+            android:textOn="Son ON" />
     </TableRow>
 
 </TableLayout>

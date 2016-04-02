@@ -146,9 +146,14 @@ public class TilesView extends View {
         }
         else {
         /*Le compteur permet de savoir si il faut creer une nouvelle*/
-            if (rectangles.getLast().getRectangle().top > 0) {
+            if(!rectangles.isEmpty()) {
+                if (rectangles.getLast().getRectangle().top > 0) {
+                    nouvelleTuile();
+                    Log.i("TEUB", "TOP NOUVELLE :" + rectangles.getLast().getRectangle().top);
+                }
+            }
+            else{
                 nouvelleTuile();
-                Log.i("TEUB","TOP NOUVELLE :"+rectangles.getLast().getRectangle().top);
             }
             if (!rectangles.isEmpty()) {
                 Log.i("TEUB","TOP :"+rectangles.getLast().getRectangle().top);
