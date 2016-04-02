@@ -1,32 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
-        android:id="@+id/score"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="20dp"
-        android:textSize="30dp"
-        android:textStyle="bold"
-        android:layout_marginTop="10dp"
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp" />
+        android:layout_marginRight="10dp">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="OK"
-        android:id="@+id/button"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="20dp"
-        android:width="80dp"
-        android:layout_gravity="center_horizontal" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Large Text"
+            android:id="@+id/score"
+            android:layout_marginBottom="10dp"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_span="2"
+            android:layout_gravity="center" />
+    </TableRow>
 
-</LinearLayout>
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="5dp">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OK"
+            android:id="@+id/button"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="0dp"
+            android:width="80dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="10dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Encore !"
+            android:id="@+id/buttonRecommencer" />
+    </TableRow>
+
+</TableLayout>

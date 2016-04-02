@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -17,6 +18,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.UiThread;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,6 +27,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -46,9 +49,10 @@ public class TilesStartActivity extends Activity {
     Dialog dialogMort;
     Dialog dialogPause;
     Dialog dialogCompteur;
-    int score = 0;
+    int score;
     TextView compteurScore;
     int compteurBro = 4;
+    ToggleButton soundButton;
 
     private Map<String, MediaPlayer> sound = new HashMap<String, MediaPlayer>();
 
@@ -61,22 +65,27 @@ public class TilesStartActivity extends Activity {
     //Intent intent = new Intent(TilesStartActivity.this, Menu.class);
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE); //Supprime affichage du titre.
+
         /* Initialisation du son */
         sound.put("kyle", MediaPlayer.create(this, R.raw.kyle));
         sound.put("stan", MediaPlayer.create(this, R.raw.stanley1));
         sound.put("cartman", MediaPlayer.create(this, R.raw.cartman1));
         sound.put("kenny", MediaPlayer.create(this, R.raw.kenny1));
 
-
-        super.onCreate(savedInstanceState);
+        score = 0;
         setContentView(R.layout.activity_tiles_start);
         //ICI - Commentez le code
         tilesView = (TilesView) findViewById(R.id.view);
+        final TextView touche = (TextView) this.findViewById(R.id.textViewTouche);
+
         //ICI - Commentez le code
         tilesView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                touche.setText("");
                 return onTouchEventHandler(event);
             }
         });
@@ -85,16 +94,29 @@ public class TilesStartActivity extends Activity {
         dialogMort = new Dialog(tilesView.getContext());
         dialogMort.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialogMort.setContentView(R.layout.popup_mort);
-        dialogMort.setCanceledOnTouchOutside(false);
+        dialogMort.setCancelable(false);
         final Button boutonOk = (Button) dialogMort.findViewById(R.id.button);
+        final Button boutonRecommencer = (Button) dialogMort.findViewById(R.id.buttonRecommencer);
+
+        boutonRecommencer.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                dialogMort.dismiss();
+                onCreate(savedInstanceState);
+            }
+
+        });
 
         boutonOk.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-
+                Intent data = new Intent();
+                data.putExtra("fr.ups.sim.superpianotiles.SON", soundButton.isChecked());
+                setResult(RESULT_OK, data);
                 finish();
-                System.exit(0);
+                //System.exit(0);
             }
 
         });
@@ -102,7 +124,7 @@ public class TilesStartActivity extends Activity {
         dialogPause = new Dialog(tilesView.getContext());
         dialogPause.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialogPause.setContentView(R.layout.popup_pause);
-        dialogPause.setCanceledOnTouchOutside(false);
+        dialogPause.setCancelable(false);
         final Button boutonRetour = (Button) dialogPause.findViewById(R.id.buttonRetour);
         final Button boutonFini = (Button) dialogPause.findViewById(R.id.buttonFini);
 
@@ -118,12 +140,15 @@ public class TilesStartActivity extends Activity {
         dialogCompteur.setContentView(R.layout.popup_compteur);
         dialogCompteur.setCanceledOnTouchOutside(false);
         dialogCompteur.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        boutonRetour.setOnClickListener(new View.OnClickListener(){
+        boutonRetour.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 reprise();
             }
         });
+
+        soundButton = (ToggleButton) dialogPause.findViewById(R.id.toggleButtonMusicPause);
+        soundButton.setChecked(getIntent().getBooleanExtra("fr.ups.sim.superpianotiles.SON", false));
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -202,6 +227,7 @@ public class TilesStartActivity extends Activity {
 
 
     private void end(){
+        tilesView.setRun(false);
         TextView textScore = (TextView) dialogMort.findViewById(R.id.score);
         textScore.setText("Score: "+ score);
         tilesView.setAlpha(0.5f);
@@ -222,18 +248,20 @@ public class TilesStartActivity extends Activity {
                 if (r.contains((int) evt.getX(), (int) evt.getY())) {
                     /* Instructions nécessaire pour jouer un son
                     (cf. Diagramme d'état de la classe MediaPlayer */
-                    mPlayer = sound.get(tuile.getNom());
-                    mPlayer.start();
-                    mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                        public void onCompletion(MediaPlayer mp) {
-                            mp.stop();
-                            try {
-                                mp.prepare();
-                            } catch (IOException e) {
-                                e.printStackTrace();
+                    if(soundButton.isChecked()) {
+                        mPlayer = sound.get(tuile.getNom());
+                        mPlayer.start();
+                        mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                            public void onCompletion(MediaPlayer mp) {
+                                mp.stop();
+                                try {
+                                    mp.prepare();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
                     tilesView.delTuile();
                     score ++;
                     compteurScore.setText(String.valueOf(score));

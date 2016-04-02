@@ -14,7 +14,9 @@
         android:id="@+id/button3"
         android:layout_margin="20dp"
         android:layout_centerVertical="true"
-        android:layout_column="0" />
+        android:layout_column="0"
+        android:textSize="20dp"
+        android:textStyle="bold" />
 
     <Button
             android:layout_width="fill_parent"
@@ -25,6 +27,17 @@
             android:layout_above="@+id/button3"
             android:layout_alignParentStart="true"
             android:layout_margin="20dp"
-            android:layout_centerVertical="true" />
+            android:layout_centerVertical="true"
+        android:textSize="20dp"
+        android:textStyle="bold" />
+
+    <ToggleButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/toggleButtonMusic"
+        android:layout_gravity="center_horizontal"
+        android:checked="@bool/sound"
+        android:textOn="Son ON"
+        android:textOff="Son OFF" />
 
 </LinearLayout>
