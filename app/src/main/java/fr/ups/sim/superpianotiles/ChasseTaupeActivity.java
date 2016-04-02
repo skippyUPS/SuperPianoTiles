@@ -96,7 +96,6 @@ public class ChasseTaupeActivity extends Activity{
                     handlerTimer.postDelayed(this, time);
                 }
                 else{
-                    final TextView affiche = (TextView) findViewById(R.id.score);
                     TextView text = (TextView) dialog.findViewById(R.id.score);
                     text.setText("Score : " + score);
                     dialog.show();
