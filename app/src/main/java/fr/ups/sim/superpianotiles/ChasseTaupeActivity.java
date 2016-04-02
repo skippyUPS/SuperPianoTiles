@@ -32,16 +32,21 @@ public class ChasseTaupeActivity extends Activity{
     int i, score;
     Dialog dialog;
     boolean fini =false;
+    private float alpha;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         /* Initialisation du son */
         sound.put("kyle", MediaPlayer.create(this, R.raw.kyle));
         sound.put("stan", MediaPlayer.create(this, R.raw.stanley1));
         sound.put("cartman", MediaPlayer.create(this, R.raw.cartman1));
         sound.put("kenny", MediaPlayer.create(this, R.raw.kenny1));
         /*on recupere le temps en UTC depuis 1970 en ms*/
-        temp = System.currentTimeMillis() + 1000;
+        temp = 1000;
+        score = 0;
+        alpha = 1;
+        i = 0;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chassetaupe);
         TextView afficheScore = (TextView) findViewById(R.id.score);
@@ -53,29 +58,37 @@ public class ChasseTaupeActivity extends Activity{
         dialog.setContentView(R.layout.popup_mort);
         dialog.setCancelable(false);
 
+        final Button boutonOk = (Button) dialog.findViewById(R.id.button);
+        final Button boutonRecommencer = (Button) dialog.findViewById(R.id.buttonRecommencer);
+
+        boutonRecommencer.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                onCreate(savedInstanceState);
+            }
+
+        });
+
+        boutonOk.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent data = new Intent();
+                //data.putExtra("fr.ups.sim.superpianotiles.SON", soundButton.isChecked());
+                setResult(RESULT_OK, data);
+                finish();
+            }
+
+        });
+
         //ICI - Commentez le code
 
 
         tilesView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-
-                if (System.currentTimeMillis() >= temp) {
-                    dialog.show();
-                    final Button exit = (Button) dialog.findViewById(R.id.button);
-                    final TextView scoreMort = (TextView) dialog.findViewById(R.id.score);
-                    scoreMort.setText(String.valueOf(score));
-                    fini = true;
-                    exit.setOnClickListener(new View.OnClickListener() {
-
-                        @Override
-                        public void onClick(View v) {
-                            finish();
-                        }
-
-                    });
-                }
-
                 return onTouchEventHandler(event);
 
             }
@@ -86,10 +99,10 @@ public class ChasseTaupeActivity extends Activity{
         /*Handler pour animation temps et alpha des tuiles*/
         final Handler handlerTimer = new Handler();
         handlerTimer.postDelayed(new Runnable() {
-            private long time = 100;
-            private float alpha = 1;
+            private long time = 0;
             @Override
             public void run() {
+                time = temp / 10;
                 if(alpha > 0) {
                     alpha -= 0.1;
                     tilesView.setAlpha(alpha);
@@ -146,8 +159,9 @@ public class ChasseTaupeActivity extends Activity{
             if(tuile != null)
             {
                 /* on reduit le delais de la prochaine brique*/
+                alpha = 1;
                 i+=50;
-                temp =  System.currentTimeMillis()+1000 - i;
+                temp =  1000 - i;
                 Rect r = tuile.getRectangle();
                 if(r.contains((int) evt.getX(), (int) evt.getY())) {
 
