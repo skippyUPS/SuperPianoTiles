@@ -35,6 +35,8 @@ public class Menu extends Activity{
 
         final Button defilementButton = (Button) findViewById(R.id.button);
         final Button chasseTaupeButton = (Button) findViewById(R.id.button3);
+        final Button scoreButton = (Button) findViewById(R.id.scoreButton);
+
         soundButton = (ToggleButton) findViewById(R.id.toggleButtonMusic);
 
           /* Gestion de l'appuie sur le bouton On/off du son */
@@ -81,6 +83,16 @@ public class Menu extends Activity{
                 intent.putExtra("fr.ups.sim.superpianotiles.SON", soundEnable);
                 startActivityForResult(intent, 0);
                
+            }
+
+        });
+
+        scoreButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Menu.this, ScoreActivity.class);
+                startActivity(intent);
             }
 
         });

@@ -34,8 +34,12 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
@@ -56,6 +60,21 @@ public class TilesStartActivity extends Activity {
 
     private Map<String, MediaPlayer> sound = new HashMap<String, MediaPlayer>();
 
+    /* Enregistrement du score */
+    public static final String SCORES = "scoresDefilement.xml";
+    Comparator<Integer> comp = new Comparator<Integer>(){
+        @Override
+        public int compare(Integer a, Integer b) {
+            if(a < b)
+                return 1;
+            if(a > b)
+                return -1;
+            return 0;
+        }
+    };
+    public TreeSet<Integer> scoreSet = new TreeSet<Integer>(comp);
+    private SharedPreferences settings;
+
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -68,6 +87,13 @@ public class TilesStartActivity extends Activity {
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE); //Supprime affichage du titre.
+
+        /* Score */
+        settings = getSharedPreferences(SCORES, 0);
+        for(String key : settings.getAll().keySet())
+        {
+            scoreSet.add((Integer) settings.getAll().get(key));
+        }
 
         /* Initialisation du son */
         sound.put("kyle", MediaPlayer.create(this, R.raw.kyle));
@@ -229,7 +255,25 @@ public class TilesStartActivity extends Activity {
     private void end(){
         tilesView.setRun(false);
         TextView textScore = (TextView) dialogMort.findViewById(R.id.score);
-        textScore.setText("Score: "+ score);
+        textScore.setText("Score: " + score);
+
+        /* Ajout du score, puis suppression des plus petits */
+        scoreSet.add(score);
+        while(scoreSet.size() > 8)
+        {
+            scoreSet.remove(scoreSet.last());
+        }
+
+        /* Mise à jour */
+        SharedPreferences.Editor editor = settings.edit();
+        editor.clear();
+        for(Integer i : scoreSet)
+        {
+            editor.putInt(Integer.toString(i), i);
+        }
+        editor.commit();
+
+
         tilesView.setAlpha(0.5f);
         dialogMort.show();
     }

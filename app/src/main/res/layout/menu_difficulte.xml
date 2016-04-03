@@ -25,7 +25,6 @@
         android:id="@+id/button"
         android:visibility="visible"
         android:layout_above="@+id/button3"
-        android:layout_alignParentStart="true"
         android:layout_margin="20dp"
         android:layout_centerVertical="true"
         android:textSize="20dp"
@@ -37,9 +36,7 @@
         android:layout_height="wrap_content"
         android:text="Retour"
         android:id="@+id/button2"
-        android:layout_below="@+id/button3"
-        android:layout_alignStart="@+id/button3"
-        android:layout_marginStart="52dp" />
+        android:layout_below="@+id/button3" />
 
     <ToggleButton
         android:layout_width="wrap_content"
@@ -49,8 +46,6 @@
         android:checked="@bool/sound"
         android:textOn="Son ON"
         android:textOff="Son OFF"
-        android:layout_marginEnd="91dp"
-        android:layout_alignTop="@+id/button2"
-        android:layout_alignEnd="@+id/button3" />
+        android:layout_alignTop="@+id/button2" />
 
 </RelativeLayout>
