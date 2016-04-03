@@ -45,7 +45,7 @@ public class ChasseTaupeActivity extends Activity{
         sound.put("kenny", MediaPlayer.create(this, R.raw.kenny1));
 
         String niveau = getIntent().getStringExtra("Difficulte");
-        Log.i("                                                     Niveau", " "+niveau);
+
         if ( niveau.equals("Dur"))
             delais = 1000;
         else
