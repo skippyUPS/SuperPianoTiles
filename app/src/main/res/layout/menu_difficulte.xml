@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center_horizontal"
+    android:background="@drawable/logo2"
+    android:orientation="vertical"
+    android:gravity="center_vertical">
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Noob"
+        android:id="@+id/button3"
+        android:layout_margin="20dp"
+        android:layout_centerVertical="true"
+        android:layout_column="0"
+        android:textSize="20dp"
+        android:textStyle="bold" />
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="ProGamer"
+        android:id="@+id/button"
+        android:visibility="visible"
+        android:layout_above="@+id/button3"
+        android:layout_alignParentStart="true"
+        android:layout_margin="20dp"
+        android:layout_centerVertical="true"
+        android:textSize="20dp"
+        android:textStyle="bold" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Retour"
+        android:id="@+id/button2"
+        android:layout_below="@+id/button3"
+        android:layout_alignStart="@+id/button3"
+        android:layout_marginStart="52dp" />
+
+    <ToggleButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/toggleButtonMusic"
+        android:layout_gravity="center_horizontal"
+        android:checked="@bool/sound"
+        android:textOn="Son ON"
+        android:textOff="Son OFF"
+        android:layout_marginEnd="91dp"
+        android:layout_alignTop="@+id/button2"
+        android:layout_alignEnd="@+id/button3" />
+
+</RelativeLayout>
