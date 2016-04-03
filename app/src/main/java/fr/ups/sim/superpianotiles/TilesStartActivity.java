@@ -150,8 +150,6 @@ public class TilesStartActivity extends Activity {
     @Override
     public void onStart() {
         super.onStart();
-
-        Log.i("START", "START");
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client.connect();

@@ -3,6 +3,7 @@ package fr.ups.sim.superpianotiles;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
@@ -16,8 +17,10 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeSet;
 
 /**
  * Created by Quentin on 22/03/2016.
@@ -35,6 +38,22 @@ public class ChasseTaupeActivity extends Activity{
     ToggleButton soundButton;
 
 
+    /* Enregistrement du score */
+    public static final String SCORES = "scoreTaupe.xml";
+    Comparator<Integer> comp = new Comparator<Integer>(){
+        @Override
+        public int compare(Integer a, Integer b) {
+            if(a < b)
+                return 1;
+            if(a > b)
+                return -1;
+            return 0;
+        }
+    };
+    public TreeSet<Integer> scoreSet = new TreeSet<Integer>(comp);
+    private SharedPreferences settings;
+
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +62,13 @@ public class ChasseTaupeActivity extends Activity{
         sound.put("stan", MediaPlayer.create(this, R.raw.stanley1));
         sound.put("cartman", MediaPlayer.create(this, R.raw.cartman1));
         sound.put("kenny", MediaPlayer.create(this, R.raw.kenny1));
+
+        /* Score */
+        settings = getSharedPreferences(SCORES, 0);
+        for(String key : settings.getAll().keySet())
+        {
+            scoreSet.add((Integer) settings.getAll().get(key));
+        }
 
         String niveau = getIntent().getStringExtra("Difficulte");
 
@@ -152,6 +178,7 @@ public class ChasseTaupeActivity extends Activity{
                 } else {
                     TextView text = (TextView) dialogFin.findViewById(R.id.score);
                     text.setText("Score : " + score);
+                    saveScore(score);
                     dialogFin.show();
                 }
             }
@@ -175,6 +202,7 @@ public class ChasseTaupeActivity extends Activity{
                 } else {
                     TextView text = (TextView) dialogFin.findViewById(R.id.score);
                     text.setText("Score : " + score);
+                    saveScore(score);
                     dialogFin.show();
                 }
             }
@@ -184,9 +212,35 @@ public class ChasseTaupeActivity extends Activity{
         tilesView.setRun(false);
         TextView textScore = (TextView) dialogFin.findViewById(R.id.score);
         textScore.setText("Score: "+ score);
+        saveScore(score);
+
         tilesView.setAlpha(0.5f);
         dialogFin.show();
     }
+
+    private void saveScore(int score)
+    {
+        /* Ajout du score, puis suppression des plus petits */
+        scoreSet.add(score);
+        while(scoreSet.size() > 8)
+        {
+            scoreSet.remove(scoreSet.last());
+        }
+
+        /* Mise à jour des scores */
+        SharedPreferences.Editor editor = settings.edit();
+        editor.clear();
+        for(Integer i : scoreSet)
+        {
+            editor.putInt(Integer.toString(i), i);
+        }
+        editor.commit();
+    }
+
+
+
+
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -307,10 +361,6 @@ public class ChasseTaupeActivity extends Activity{
             }
 
 
-        }
-        if ( fini)
-        {
-            
         }
 
 

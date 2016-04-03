@@ -2,6 +2,7 @@ package fr.ups.sim.superpianotiles;
 
 import java.net.URI;
 import java.util.Random;
+import java.util.TreeSet;
 
 import fr.ups.sim.superpianotiles.R;
 
