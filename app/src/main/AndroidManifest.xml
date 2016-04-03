@@ -15,6 +15,11 @@
         <activity
             android:name=".ChasseTaupeActivity"
             android:label="@string/title_activity_tiles_start"
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".MenuDifficulte"
+            android:label = "Menu"
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".Menu"

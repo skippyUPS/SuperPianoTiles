@@ -28,7 +28,7 @@ public class ChasseTaupeActivity extends Activity{
     MediaPlayer mPlayer;
     private Map<String, MediaPlayer> sound = new HashMap<String, MediaPlayer>();
     long temp ;
-    int i, score, compteurBro;
+    int i, score, compteurBro,delais;
     Dialog dialogFin,dialogPause,dialogCompteur;
     boolean fini =false , pause = false;
     private float alpha;
@@ -43,6 +43,14 @@ public class ChasseTaupeActivity extends Activity{
         sound.put("stan", MediaPlayer.create(this, R.raw.stanley1));
         sound.put("cartman", MediaPlayer.create(this, R.raw.cartman1));
         sound.put("kenny", MediaPlayer.create(this, R.raw.kenny1));
+
+        String niveau = getIntent().getStringExtra("Difficulte");
+        Log.i("                                                     Niveau", " "+niveau);
+        if ( niveau.equals("Dur"))
+            delais = 1000;
+        else
+            delais = 8000;
+
 
         temp = 1000;
         score = 0;
@@ -147,7 +155,7 @@ public class ChasseTaupeActivity extends Activity{
                     dialogFin.show();
                 }
             }
-        }, 1000);
+        }, delais);
     }
 
     public void lancerBoucle ()
@@ -170,7 +178,7 @@ public class ChasseTaupeActivity extends Activity{
                     dialogFin.show();
                 }
             }
-        }, 1000);
+        }, delais);
     }
     private void end(){
         tilesView.setRun(false);

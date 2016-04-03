@@ -46,9 +46,7 @@ public class ChasseTaupeView  extends View{
         init(attrs, defStyle);
     }
 
-    public boolean isRun() {
-        return run;
-    }
+
 
 
     private void init(AttributeSet attrs, int defStyle) {
