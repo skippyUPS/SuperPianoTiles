@@ -81,6 +81,16 @@ public class Menu extends Activity{
 
         });
 
+        scoreButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Menu.this, ScoreActivity.class);
+                startActivity(intent);
+            }
+
+        });
+
 
     }
 

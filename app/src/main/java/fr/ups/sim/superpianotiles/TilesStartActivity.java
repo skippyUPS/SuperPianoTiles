@@ -23,8 +23,14 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 public class TilesStartActivity extends Activity {
 
@@ -41,6 +47,21 @@ public class TilesStartActivity extends Activity {
     ToggleButton soundButton;
     private Map<String, MediaPlayer> sound = new HashMap<String, MediaPlayer>();
 
+    /* Enregistrement du score */
+    public static final String SCORES = "scoresDefilement.xml";
+    Comparator<Integer> comp = new Comparator<Integer>(){
+        @Override
+        public int compare(Integer a, Integer b) {
+            if(a < b)
+                return 1;
+            if(a > b)
+                return -1;
+            return 0;
+        }
+    };
+    public TreeSet<Integer> scoreSet = new TreeSet<Integer>(comp);
+    private SharedPreferences settings;
+
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -54,19 +75,26 @@ public class TilesStartActivity extends Activity {
         score = 0;
         compteurReprise = 4;
 
+        /* Score */
+        settings = getSharedPreferences(SCORES, 0);
+        for(String key : settings.getAll().keySet())
+        {
+            scoreSet.add((Integer) settings.getAll().get(key));
+        }
+
         /* Initialisation du son */
         sound.put("kyle", MediaPlayer.create(this, R.raw.kyle));
         sound.put("stan", MediaPlayer.create(this, R.raw.stanley1));
         sound.put("cartman", MediaPlayer.create(this, R.raw.cartman1));
         sound.put("kenny", MediaPlayer.create(this, R.raw.kenny1));
 
+        score = 0;
         setContentView(R.layout.activity_tiles_start);
-        /*On recupere la vue des tuiles pour pouvoir l'utiliser dans le reste de la classe*/
+        //ICI - Commentez le code
         tilesView = (TilesView) findViewById(R.id.view);
         final TextView touche = (TextView) this.findViewById(R.id.textViewTouche);
 
-        /*Listener qui permet de savoir si le joueur a appuye sur l'ecran et va lancer la fonction
-        * onTouchEventHandle*/
+        //ICI - Commentez le code
         tilesView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -74,8 +102,6 @@ public class TilesStartActivity extends Activity {
                 return onTouchEventHandler(event);
             }
         });
-
-        /*Compteur qui affiche le score a l'ecran*/
         compteurScore = (TextView) this.findViewById(R.id.textScore);
         compteurScore.setText(String.valueOf(score));
 
@@ -253,7 +279,25 @@ public class TilesStartActivity extends Activity {
     private void end(){
         tilesView.setRun(false);
         TextView textScore = (TextView) dialogMort.findViewById(R.id.score);
-        textScore.setText("Score: "+ score);
+        textScore.setText("Score: " + score);
+
+        /* Ajout du score, puis suppression des plus petits */
+        scoreSet.add(score);
+        while(scoreSet.size() > 8)
+        {
+            scoreSet.remove(scoreSet.last());
+        }
+
+        /* Mise à jour */
+        SharedPreferences.Editor editor = settings.edit();
+        editor.clear();
+        for(Integer i : scoreSet)
+        {
+            editor.putInt(Integer.toString(i), i);
+        }
+        editor.commit();
+
+
         tilesView.setAlpha(0.5f);
         dialogMort.show();
     }
